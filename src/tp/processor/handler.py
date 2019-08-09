@@ -17,29 +17,45 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+import logging
+
+import cbor2
+from sawtooth_sdk.processor.exceptions import InvalidTransaction
 from sawtooth_sdk.processor.handler import TransactionHandler
-from tp.processor.petition_payload import Payload, ACTION
+from tp.processor.payload import Payload, ACTION
+from hashlib import sha512
+
+FAMILY_NAME = "DECODE_PETITION"
+LOG = logging.getLogger(__name__)
 
 
 class PetitionTransactionHandler(TransactionHandler):
-
-    NAMESPACE = "DECODE_PETITION"
-
     @property
     def family_name(self):
-        return self.NAMESPACE
+        return FAMILY_NAME
 
     @property
     def family_versions(self):
-        return ["0.1", "1.0"]
+        return ["1.0"]
 
     @property
     def namespaces(self):
-        return [self.NAMESPACE]
+        return [sha512(FAMILY_NAME.encode("utf-8")).hexdigest()[0:6]]
+
+    def get_address(self):
+        pid = sha512(self.payload.petition_id.encode("utf-8")).hexdigest()[-64:]
+        return self.namespaces[0] + pid
 
     def apply(self, transaction, context):
-        self.payload = Payload(transaction.payload)
-        self.make_action()
+        try:
+            self.payload = Payload(transaction.payload)
+            self.make_action()
+            self.save_state(context)
+        except Exception as e:
+            LOG.debug("Exception saving state", str(e))
+            raise InvalidTransaction(
+                "An error happened tying to process tx, see logs " + str(e)
+            )
 
     def make_action(self):
         action = self.payload.action
@@ -55,16 +71,29 @@ class PetitionTransactionHandler(TransactionHandler):
             self.tally_petition()
 
     def count_petition(self):
-        print("PETITION COUNTED")
+        LOG.error("PETITION COUNTED")
 
     def create_petition(self):
-        print("PETITION CREATED")
+        LOG.debug("PETITION CREATED")
 
     def sign_petition(self):
-        print("PETITION SIGNED")
+        LOG.error("PETITION SIGNED")
 
     def show_petition(self):
-        print("PETITION SHOW")
+        LOG.error("PETITION SHOW")
 
     def tally_petition(self):
-        print("PETITION TALLY")
+        LOG.error("PETITION TALLY")
+
+    def save_state(self, context):
+        state = dict(action=self.payload.action)
+        encoded_state = cbor2.dumps(state)
+
+        state = {self.get_address(): encoded_state}
+        LOG.debug(
+            f"Saving state with context_id [{self.payload.petition_id}] as : {state}"
+        )
+        try:
+            context.set_state(state)
+        except Exception:
+            raise InvalidTransaction("State error")

@@ -20,44 +20,24 @@
 import setuptools
 
 setuptools.setup(
-    name="petition-tp-python",
-    version="0.0.1",
-    author="Puria Nafisi Azizi",
-    author_email="puria@dyne.org",
-    description="DECODE Petition Pilot Transaction Processor for Hyperledger Sawtooth",
-    long_description_content_type="text/markdown",
-    url="https://github.com/DECODEproject/petition-tp-python",
-    packages=setuptools.find_packages(),
+    # use_scm_version={
+    #     'version_scheme': 'post-release',
+    #     'local_scheme': 'dirty-tag'
+    # },
     entry_points={
         "console_scripts": [
-            "petition-tp-python = tp.main:main",
+            "petition-tp-python = tp.processor.main:main",
             "petition = tp.client.main:main",
         ]
     },
-    setup_requires=["pytest-runner"],
-    tests_require=[],
     install_requires=[
-        "cbor==1.0.0",
-        "zenroom==1.0.6",
+        "click==7.0",
+        "cbor2==4.1.2",
+        #        "zenroom==1.0.6",
         "environs==5.2.1",
         "pre-commit==1.18.0",
         "sawtooth-sdk==1.1.5",
         "sawtooth-signing==1.1.5",
     ],
     python_requires=">=3.5",
-    project_urls={
-        "Zenroom": "https://zenroom.dyne.org",
-        "DECODE": "https://decodeproject.eu",
-    },
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: GNU Affero General Public License v3",
-        "Intended Audience :: Developers",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS :: MacOS X",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Topic :: Security",
-    ],
 )

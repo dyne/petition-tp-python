@@ -8,12 +8,12 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 RUN apt-get update -y -q \
-	&& apt-get install -y -q \
+    && apt-get install -y -q \
     pkg-config \
     python3 \
     python3-pip \
     python3-stdeb \
-	python3-dev \
+    python3-dev \
     python3-protobuf \
     python3-cbor \
     python3-colorlog \

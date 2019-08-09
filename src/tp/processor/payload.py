@@ -32,10 +32,10 @@ class ACTION:
 
 class Payload:
     def __init__(self, payload):
-        try:
-            petition_id, action, data, keys = payload.decode().split(",")
-        except ValueError:
-            raise InvalidTransaction("Invalid payload")
+        petition_id = payload.get("petition_id", None)
+        data = payload.get("data", None)
+        keys = payload.get("keys", None)
+        action = payload.get("action", None)
 
         if not petition_id:
             raise InvalidTransaction("petition_id is required")
@@ -61,12 +61,16 @@ class Payload:
         try:
             data_object = json.loads(data)
         except ValueError:
-            raise InvalidTransaction("data is in a wrong format")
+            raise InvalidTransaction(
+                "data is in a wrong format, should be a valid JSON"
+            )
 
         try:
             keys_object = json.loads(keys)
         except ValueError:
-            raise InvalidTransaction("keys is in a wrong format")
+            raise InvalidTransaction(
+                "keys is in a wrong format, should be a valid JSON"
+            )
 
         self.keys = keys_object
         self.data = data_object
