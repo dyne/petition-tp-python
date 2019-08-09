@@ -30,8 +30,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     entry_points={
         "console_scripts": [
-            "petition-tp-python = src.tp.processor.main:main",
-            "petition = src.tp.client.main:main",
+            "petition-tp-python = tp.main:main",
+            "petition = tp.client.main:main",
         ]
     },
     setup_requires=["pytest-runner"],
@@ -39,8 +39,8 @@ setuptools.setup(
     install_requires=[
         "cbor==1.0.0",
         "zenroom==1.0.6",
-        "environs==4.1.0",
-        "pre-commit==1.16.0",
+        "environs==5.2.1",
+        "pre-commit==1.18.0",
         "sawtooth-sdk==1.1.5",
         "sawtooth-signing==1.1.5",
     ],

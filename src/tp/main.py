@@ -25,7 +25,7 @@ from sawtooth_sdk.processor.config import get_log_dir
 from sawtooth_sdk.processor.core import TransactionProcessor
 from sawtooth_sdk.processor.log import log_configuration, init_console_logging
 
-from tp.processor.handler import ZenroomTransactionHandler
+from tp.processor.handler import PetitionTransactionHandler
 
 env = Env()
 env.read_env()
@@ -34,13 +34,14 @@ env.read_env()
 def main():
     try:
         url = env("SAWTOOTH_VALIDATOR_ENDPOINT", "tcp://validator:4004")
-        rest_api = env("SAWTOOTH_REST_ENDPOINT", "http://rest-api:8090")
+        # rest_api = env("SAWTOOTH_REST_ENDPOINT", "http://rest-api:8090")
         processor = TransactionProcessor(url=url)
         log_dir = get_log_dir()
-        log_configuration(log_dir=log_dir,
-                          name="petition_" + str(processor.zmq_id)[2:-1])
+        log_configuration(
+            log_dir=log_dir, name="petition_" + str(processor.zmq_id)[2:-1]
+        )
         init_console_logging()
-        handler = ZenroomTransactionHandler(url=rest_api)
+        handler = PetitionTransactionHandler()  # url=rest_api)
         processor.add_handler(handler)
         processor.start()
     except KeyboardInterrupt:

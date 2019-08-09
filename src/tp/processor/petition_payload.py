@@ -17,15 +17,18 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+import json
 
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
+
 class ACTION:
-    COUNT = 'count'
-    CREATE = 'create'
-    SIGN = 'sign'
-    SHOW = 'show'
-    TALLY = 'tally'
+    COUNT = "count"
+    CREATE = "create"
+    SIGN = "sign"
+    SHOW = "show"
+    TALLY = "tally"
+
 
 class Payload:
     def __init__(self, payload):
@@ -46,14 +49,20 @@ class Payload:
         if not keys:
             raise InvalidTransaction("keys is required")
 
-        if action not in [ACTION.COUNT, ACTION.CREATE, ACTION.SIGN, ACTION.SHOW, ACTION.TALLY]:
-            raise InvalidTransaction(f'Invalid action: {action}')
+        if action not in [
+            ACTION.COUNT,
+            ACTION.CREATE,
+            ACTION.SIGN,
+            ACTION.SHOW,
+            ACTION.TALLY,
+        ]:
+            raise InvalidTransaction(f"Invalid action: {action}")
 
         try:
             data_object = json.loads(data)
         except ValueError:
             raise InvalidTransaction("data is in a wrong format")
-        
+
         try:
             keys_object = json.loads(keys)
         except ValueError:
@@ -67,7 +76,7 @@ class Payload:
     @property
     def keys(self):
         return self.keys
-    
+
     @property
     def data(self):
         return self.data

@@ -17,22 +17,25 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+from sawtooth_sdk.processor.handler import TransactionHandler
+from tp.processor.petition_payload import Payload, ACTION
+
 
 class PetitionTransactionHandler(TransactionHandler):
 
     NAMESPACE = "DECODE_PETITION"
-    
-    @property
-    def family_name(self):
-        return NAMESPACE
 
     @property
-    def family_version(self):
-        return ["1.0"]
+    def family_name(self):
+        return self.NAMESPACE
+
+    @property
+    def family_versions(self):
+        return ["0.1", "1.0"]
 
     @property
     def namespaces(self):
-        return [NAMESPACE]
+        return [self.NAMESPACE]
 
     def apply(self, transaction, context):
         self.payload = Payload(transaction.payload)
