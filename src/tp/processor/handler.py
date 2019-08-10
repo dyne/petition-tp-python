@@ -30,6 +30,9 @@ LOG = logging.getLogger(__name__)
 
 
 class PetitionTransactionHandler(TransactionHandler):
+    def __init__(self):
+        LOG.info("TRANSACTION_HANDLER")
+
     @property
     def family_name(self):
         return FAMILY_NAME

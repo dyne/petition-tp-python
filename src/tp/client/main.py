@@ -63,9 +63,7 @@ def keygen(out):
     help="Rest API server address",
     default="http://localhost:8090/batches",
 )
-@click.argument(
-    "petition-id", required=True
-)  # , help="Petition unique identifier string")
+@click.argument("petition-id", required=True)
 def create(petition_id, credential, verify, address, private_key):
     sh.set_url(address)
     payload = dict(
@@ -77,12 +75,6 @@ def create(petition_id, credential, verify, address, private_key):
     _send_command(payload)
 
 
-def _generate_address(family_name, payload):
-    namespace = sha512(family_name.encode("utf-8")).hexdigest()[0:6]
-    petition = sha512(payload["petition_id"].encode("utf-8")).hexdigest()[-64:]
-    return namespace + petition
-
-
 def _send_command(payload):
     family_name = "DECODE_PETITION"
     family_version = "0.1"
@@ -92,6 +84,12 @@ def _send_command(payload):
         click.secho(str(response), fg="green")
     except URLError:
         click.secho("ADDRESS ERROR: please double check your -a option", fg="red")
+
+
+def _generate_address(family_name, payload):
+    namespace = sha512(family_name.encode("utf-8")).hexdigest()[0:6]
+    petition = sha512(payload["petition_id"].encode("utf-8")).hexdigest()[-64:]
+    return namespace + petition
 
 
 main.add_command(create)

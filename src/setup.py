@@ -20,10 +20,6 @@
 import setuptools
 
 setuptools.setup(
-    # use_scm_version={
-    #     'version_scheme': 'post-release',
-    #     'local_scheme': 'dirty-tag'
-    # },
     entry_points={
         "console_scripts": [
             "petition-tp-python = tp.processor.main:main",
