@@ -10,7 +10,7 @@ extra:
     docker: https://hub.docker.com/r/dyne/sawroom
   drift_handle: s64nd7w43g53
   nav:
-    subtitle: This is an awesome project
+    subtitle: Petition Transaction Processor for Hyperledger Sawtooth
     logo: null # /img/redroom-trans.png
     og_image_large: null # /img/redroom-trans.png
 

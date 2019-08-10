@@ -19,19 +19,8 @@ This repository implements the whole [DECODEproject](https://decodeproject.eu)'s
 To facilitate the creation of transaction families based on [Zenroom VM](https://zenroom.dyne.org) and the [Zencode human-friendly language for smart-contracts](https://decodeproject.eu/blog/smart-contracts-english-speaker), this TP uses the [Sawtooth SDK](https://sawtooth.hyperledger.org/docs/core/releases/latest/sdks.html) in Python and the [zenroom-py](https://github.com/DECODEproject/zenroom-py) bindings.
 
 
-<details>
- <summary><strong>:triangular_flag_on_post: Table of Contents</strong> (click to expand)</summary>
-
-* [Docker](#whale-docker)
-* [Configuration](#wrench-configuration)
-* [Acknowledgements](#heart_eyes-acknowledgements)
-* [Links](#globe_with_meridians-links)
-* [Contributing](#busts_in_silhouette-contributing)
-* [License](#briefcase-license)
-</details>
-
 ***
-## :whale: Docker
+## 🐋 Docker
 
 ```bash
 docker-compose up --build
@@ -56,7 +45,7 @@ docker exec -it petition-tp petition-tx transaction --help
 ```
 
 ***
-## :wrench: Configuration
+## 🔧 Configuration
 
 Configuration are passed along ENV variables or .dotenv files, the available
 variables are:
@@ -66,7 +55,7 @@ variables are:
 
 
 ***
-## :heart_eyes: Acknowledgements
+## 😍 Acknowledgements
 
 Copyright :copyright: 2019 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
 
@@ -78,7 +67,7 @@ This project is receiving funding from the European Union’s Horizon 2020 resea
 
 
 ***
-## :globe_with_meridians: Links
+## 🌐 Links
 
 https://zenroom.dyne.org/
 
@@ -88,11 +77,11 @@ https://dyne.org/
 
 
 ***
-## :busts_in_silhouette: Contributing
+## 👥 Contributing
 
 Please first take a look at the [Dyne.org - Contributor License Agreement](CONTRIBUTING.md) then
 
-1.  :twisted_rightwards_arrows: [FORK IT](../../fork)
+1.  🔀 [FORK IT](../../fork)
 2.  Create your feature branch `git checkout -b feature/branch`
 3.  Commit your changes `git commit -am 'Add some fooBar'`
 4.  Push to the branch `git push origin feature/branch`
@@ -101,7 +90,7 @@ Please first take a look at the [Dyne.org - Contributor License Agreement](CONTR
 
 
 ***
-## :briefcase: License
+## 💼 License
 
     Petition TP, Transaction processor for Decode Petition over sawtooth
     Copyright (c) 2019 Dyne.org foundation, Amsterdam
