@@ -20,7 +20,7 @@ To facilitate the creation of transaction families based on [Zenroom VM](https:/
 
 
 ***
-## 🐋 Docker
+## 🐳 Docker
 
 ```bash
 docker-compose up --build
@@ -44,7 +44,7 @@ docker exec -it petition-tp petition-tx keygen FILENAME
 docker exec -it petition-tp petition-tx transaction --help
 ```
 
-***
+
 ## 🔧 Configuration
 
 Configuration are passed along ENV variables or .dotenv files, the available
@@ -57,7 +57,7 @@ variables are:
 ***
 ## 😍 Acknowledgements
 
-Copyright :copyright: 2019 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
+Copyright 🄯 2019 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
 
 Designed, written and maintained by Puria Nafisi Azizi.
 
@@ -69,11 +69,11 @@ This project is receiving funding from the European Union’s Horizon 2020 resea
 ***
 ## 🌐 Links
 
-https://zenroom.dyne.org/
+[https://zenroom.org/](https://zenroom.org/)
 
-https://decodeproject.eu/
+[https://decodeproject.eu/](https://decodeproject.eu/)
 
-https://dyne.org/
+[https://dyne.org/](https://dyne.org/)
 
 
 ***
