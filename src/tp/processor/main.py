@@ -23,7 +23,11 @@ import sys
 from environs import Env
 from sawtooth_sdk.processor.config import get_log_dir
 from sawtooth_sdk.processor.core import TransactionProcessor
-from sawtooth_sdk.processor.log import log_configuration, init_console_logging
+from sawtooth_sdk.processor.log import (
+    log_configuration,
+    init_console_logging,
+    create_console_handler,
+)
 
 from tp.processor.handler import PetitionTransactionHandler
 
@@ -40,7 +44,8 @@ def main():
         log_configuration(
             log_dir=log_dir, name="petition_" + str(processor.zmq_id)[2:-1]
         )
-        init_console_logging()
+        create_console_handler(5)
+        init_console_logging(5)
         handler = PetitionTransactionHandler()  # url=rest_api)
         processor.add_handler(handler)
         processor.start()

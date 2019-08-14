@@ -1,5 +1,4 @@
-import json
-import urllib.request
+import requests
 from random import randint
 
 import cbor2 as cbor2
@@ -66,13 +65,9 @@ class SawtoothHelper:
             payload, family_name, family_version, address
         )
         batches = self.create_batch(transactions)
-        request = urllib.request.Request(
+        response = requests.post(
             f"{self.base_url}",
-            batches,
-            method="POST",
+            data=batches,
             headers={"Content-Type": "application/octet-stream"},
         )
-        response = urllib.request.urlopen(request)
-        data = response.read()
-        encoding = response.info().get_content_charset("utf-8")
-        return json.loads(data.decode(encoding))
+        return response.json()

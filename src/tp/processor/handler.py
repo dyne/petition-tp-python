@@ -17,22 +17,23 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+import json
 import logging
+import random
+import string
 
 import cbor2
-from sawtooth_sdk.processor.exceptions import InvalidTransaction
+from sawtooth_sdk.processor.exceptions import InvalidTransaction, InternalError
 from sawtooth_sdk.processor.handler import TransactionHandler
 from tp.processor.payload import Payload, ACTION
 from hashlib import sha512
+from zenroom.zenroom import zencode_exec_rng
 
 FAMILY_NAME = "DECODE_PETITION"
 LOG = logging.getLogger(__name__)
 
 
 class PetitionTransactionHandler(TransactionHandler):
-    def __init__(self):
-        LOG.info("TRANSACTION_HANDLER")
-
     @property
     def family_name(self):
         return FAMILY_NAME
@@ -51,52 +52,100 @@ class PetitionTransactionHandler(TransactionHandler):
 
     def apply(self, transaction, context):
         try:
+            self.context = context
             self.payload = Payload(transaction.payload)
+            self.seed = "".join(
+                random.SystemRandom().choice(string.ascii_letters + string.digits)
+                for _ in range(2048)
+            )
             self.make_action()
-            self.save_state(context)
         except Exception as e:
-            LOG.debug("Exception saving state", str(e))
             raise InvalidTransaction(
                 "An error happened tying to process tx, see logs " + str(e)
             )
 
     def make_action(self):
         action = self.payload.action
-        if action == ACTION.COUNT:
-            self.count_petition()
         if action == ACTION.CREATE:
             self.create_petition()
         if action == ACTION.SIGN:
             self.sign_petition()
-        if action == ACTION.SHOW:
-            self.show_petition()
         if action == ACTION.TALLY:
             self.tally_petition()
 
-    def count_petition(self):
-        LOG.error("PETITION COUNTED")
-
     def create_petition(self):
+        zencode = f"""Scenario 'coconut': "Create a new petition"
+        Given that I am known as 'identifier'
+        and I have my keypair
+        and I have a signed credential
+        and I use the verification key by 'issuer_identifier'
+        When I aggregate all the verification keys
+        and I generate a credential proof
+        and I create a new petition '{self.payload.petition_id}'
+        Then print all data
+        """
+        petition, _ = zencode_exec_rng(
+            script=zencode,
+            random_seed=bytearray(self.seed, "utf=8"),
+            keys=self.payload.keys,
+            data=self.payload.data,
+        )
+        self.save_petition_state(petition)
         LOG.debug("PETITION CREATED")
 
     def sign_petition(self):
-        LOG.error("PETITION SIGNED")
-
-    def show_petition(self):
-        LOG.error("PETITION SHOW")
+        zencode = """Scenario 'coconut': "Add a signature to the petition"
+        Given that I receive a signature
+        and I receive a petition
+        When a valid petition signature is counted
+        Then print all data
+        """
+        petition, _ = zencode_exec_rng(
+            script=zencode,
+            random_seed=bytearray(self.seed, "utf=8"),
+            keys=self.lookup_petition(),
+            data=self.payload.data,
+        )
+        self.save_petition_state(petition)
+        LOG.debug("PETITION SIGNED")
 
     def tally_petition(self):
-        LOG.error("PETITION TALLY")
+        zencode = """Scenario 'coconut': "Close the petition, formally 'the tally'"
+        Given that I am known as 'identifier'
+        and I have my keypair
+        and I receive a petition
+        When I tally the petition
+        Then print all data
+        """
+        petition, _ = zencode_exec_rng(
+            script=zencode,
+            random_seed=bytearray(self.seed, "utf=8"),
+            keys=self.payload.keys,
+            data=self.lookup_petition(),
+        )
+        self.save_petition_state(petition)
+        LOG.debug("PETITION TALLIED")
 
-    def save_state(self, context):
-        state = dict(action=self.payload.action)
+    def lookup_petition(self):
+        state = self.context.get_state([self.get_address()])
+        try:
+            return cbor2.loads(state[0].petition)
+        except IndexError:
+            return {}
+        except:  # noqa
+            raise InternalError("Failed to load petition")
+
+    def save_petition_state(self, petition):
+        state = dict(petition=json.dumps(json.loads(petition), sort_keys=True))
+        self.save_state(state)
+
+    def save_state(self, state):
         encoded_state = cbor2.dumps(state)
-
         state = {self.get_address(): encoded_state}
         LOG.debug(
             f"Saving state with context_id [{self.payload.petition_id}] as : {state}"
         )
         try:
-            context.set_state(state)
+            self.context.set_state(state)
         except Exception:
             raise InvalidTransaction("State error")

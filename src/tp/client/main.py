@@ -17,9 +17,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+import base64
 from urllib.error import URLError
 
+import cbor2
 import click as click
+import requests
 from tp.client.sawtooth import SawtoothHelper
 from hashlib import sha512
 
@@ -75,9 +78,87 @@ def create(petition_id, credential, verify, address, private_key):
     _send_command(payload)
 
 
+@main.command()
+@click.option(
+    "--signature",
+    type=click.File("rb"),
+    required=True,
+    help="A file that contains a petition signature",
+)
+@click.option(
+    "-p",
+    "--private-key",
+    type=click.File("rb"),
+    help="If specified loads a private key from a file else automatically a new key is generated",
+)
+@click.option(
+    "-a",
+    "--address",
+    help="Rest API server address",
+    default="http://localhost:8090/batches",
+)
+@click.argument("petition-id", required=True)
+def sign(petition_id, signature, address, private_key):
+    sh.set_url(address)
+    payload = dict(
+        action="sign", keys=signature.read().decode(), petition_id=petition_id
+    )
+    _send_command(payload)
+
+
+@main.command()
+@click.option(
+    "--tally",
+    type=click.File("rb"),
+    required=True,
+    help="A file that contains a tally object",
+)
+@click.option(
+    "-p",
+    "--private-key",
+    type=click.File("rb"),
+    help="If specified loads a private key from a file else automatically a new key is generated",
+)
+@click.option(
+    "-a",
+    "--address",
+    help="Rest API server address",
+    default="http://localhost:8090/batches",
+)
+@click.argument("petition-id", required=True)
+def tally(petition_id, credential, address, private_key):
+    sh.set_url(address)
+    payload = dict(
+        action="tally", keys=credential.read().decode(), petition_id=petition_id
+    )
+    _send_command(payload)
+
+
+@main.command()
+@click.option(
+    "-p",
+    "--private-key",
+    type=click.File("rb"),
+    help="If specified loads a private key from a file else automatically a new key is generated",
+)
+@click.option(
+    "-a", "--address", help="Rest API server address", default="http://localhost:8090"
+)
+@click.argument("petition-id", required=True)
+def show(petition_id, address, private_key):
+    payload = dict(petition_id=petition_id)
+    petition_address = _generate_address("DECODE_PETITION", payload)
+    r = requests.get(f"{address}/state?address={petition_address}")
+    transactions = r.json()["data"]
+    click.secho("PAYLOADS:", fg="green")
+    for t in transactions:
+        click.secho("=" * 80, fg="cyan")
+        click.echo(cbor2.loads(base64.b64decode(t["data"])))
+
+
 def _send_command(payload):
     family_name = "DECODE_PETITION"
-    family_version = "0.1"
+    family_version = "1.0"
     address = _generate_address(family_name, payload)
     try:
         response = sh.post(payload, family_name, family_version, address)

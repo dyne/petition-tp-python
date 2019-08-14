@@ -10,8 +10,7 @@
         <li><span class="mdi mdi-history"></span><a href="{{ config.extra.links.releases }}">Latest Release</a></li>
         {% endif %}
         {% if config.extra.links.docker %}
-        <li><span class="mdi mdi-docker"></span> Docker:<br/>
-			<a href="https://github.com/dyne/docker-dyne-software/tree/master/{{config.extra.basename}}"> {{ config.extra.links.docker }}</a></li>
+        <li><span class="mdi mdi-docker"></span><a href="{{ config.extra.links.docker }}">Docker</a></li>
         {% endif %}
         {% if config.extra.links.quickstart %}
         <li><span class="mdi mdi-school"></span><a href="{{ config.extra.links.quickstart }}">Quick Start Guide</a></li>
@@ -26,11 +25,14 @@
 
     <h1 class="menu-label">
         <span class="mdi mdi-format-list-numbered has-text-primary"></span> Table of Contents</h1>
-	{% for toc_item in page.toc %}
-    {% if toc_item.children %}
     <ul class="menu-list">
-        {% include 'partials/sidebar-item.html' %}
+        {% for toc_item in page.toc %}
+        <li>
+            <a href="{{ toc_item.url }}">{{ toc_item.title }}</a>
+            {% if toc_item.children %}
+                {% include 'partials/sidebar-item.html' %}
+            {% endif %}
+        </li>
+        {% endfor %}
     </ul>
-    {% endif %}
-	{% endfor %}
 </aside>

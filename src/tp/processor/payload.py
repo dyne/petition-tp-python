@@ -19,6 +19,7 @@
 ##############################################################################
 import json
 
+import cbor2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 
@@ -32,6 +33,7 @@ class ACTION:
 
 class Payload:
     def __init__(self, payload):
+        payload = cbor2.loads(payload)
         petition_id = payload.get("petition_id", None)
         data = payload.get("data", None)
         keys = payload.get("keys", None)
@@ -42,9 +44,6 @@ class Payload:
 
         if not action:
             raise InvalidTransaction("action is required")
-
-        if not data:
-            raise InvalidTransaction("data is required")
 
         if not keys:
             raise InvalidTransaction("keys is required")
@@ -65,33 +64,18 @@ class Payload:
                 "data is in a wrong format, should be a valid JSON"
             )
 
-        try:
-            keys_object = json.loads(keys)
-        except ValueError:
-            raise InvalidTransaction(
-                "keys is in a wrong format, should be a valid JSON"
-            )
+        if data:
+            try:
+                keys_object = json.loads(keys)
+            except ValueError:
+                raise InvalidTransaction(
+                    "keys is in a wrong format, should be a valid JSON"
+                )
+            self.data = json.dumps(data_object, sort_keys=True)
 
-        self.keys = keys_object
-        self.data = data_object
+        self.keys = json.dumps(keys_object, sort_keys=True)
         self.petition_id = petition_id
         self.action = action
-
-    @property
-    def keys(self):
-        return self.keys
-
-    @property
-    def data(self):
-        return self.data
-
-    @property
-    def petition_id(self):
-        return self.petition_id
-
-    @property
-    def action(self):
-        return self.action
 
     @staticmethod
     def from_bytes(payload):
