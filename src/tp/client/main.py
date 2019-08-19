@@ -108,7 +108,7 @@ def sign(petition_id, signature, address, private_key):
 
 @main.command()
 @click.option(
-    "--tally",
+    "--credential",
     type=click.File("rb"),
     required=True,
     help="A file that contains a tally object",

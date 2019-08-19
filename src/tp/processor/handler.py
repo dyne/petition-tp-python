@@ -19,8 +19,8 @@
 ##############################################################################
 import json
 import logging
-import random
-import string
+import traceback
+from json import JSONDecodeError
 
 import cbor2
 from sawtooth_sdk.processor.exceptions import InvalidTransaction, InternalError
@@ -54,12 +54,10 @@ class PetitionTransactionHandler(TransactionHandler):
         try:
             self.context = context
             self.payload = Payload(transaction.payload)
-            self.seed = "".join(
-                random.SystemRandom().choice(string.ascii_letters + string.digits)
-                for _ in range(2048)
-            )
+            self.seed = "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"
             self.make_action()
         except Exception as e:
+            LOG.error(traceback.format_exc())
             raise InvalidTransaction(
                 "An error happened tying to process tx, see logs " + str(e)
             )
@@ -75,14 +73,14 @@ class PetitionTransactionHandler(TransactionHandler):
 
     def create_petition(self):
         zencode = f"""Scenario 'coconut': "Create a new petition"
-        Given that I am known as 'identifier'
-        and I have my keypair
-        and I have a signed credential
-        and I use the verification key by 'issuer_identifier'
-        When I aggregate all the verification keys
-        and I generate a credential proof
-        and I create a new petition '{self.payload.petition_id}'
-        Then print all data
+        Given I have inside 'issuer identifier' a valid 'ca_verify'
+        and I have a valid 'credential proof'
+        and I have a valid 'petition'
+        When I aggregate verifiers from 'ca_verify'
+        and I verify the credential proof is correct
+        and I verify the new petition to be empty
+        Then print the 'petition'
+        and print the 'verifiers'
         """
         petition, _ = zencode_exec_rng(
             script=zencode,
@@ -95,27 +93,32 @@ class PetitionTransactionHandler(TransactionHandler):
 
     def sign_petition(self):
         zencode = """Scenario 'coconut': "Add a signature to the petition"
-        Given that I receive a signature
-        and I receive a petition
-        When a valid petition signature is counted
-        Then print all data
+        Given that I have a valid 'petition_signature'
+        and I have a valid 'petition'
+        and I have a valid 'verifiers'
+        When the petition signature is not a duplicate
+        and the petition signature is just one more
+        and I add the signature to the petition
+        Then print the 'petition'
+        and print the 'verifiers'
         """
         petition, _ = zencode_exec_rng(
             script=zencode,
             random_seed=bytearray(self.seed, "utf=8"),
             keys=self.lookup_petition(),
-            data=self.payload.data,
+            data=self.payload.keys,
         )
         self.save_petition_state(petition)
         LOG.debug("PETITION SIGNED")
 
     def tally_petition(self):
-        zencode = """Scenario 'coconut': "Close the petition, formally 'the tally'"
+        zencode = """Scenario 'coconut': "Close the petition, formally the tally"
         Given that I am known as 'identifier'
-        and I have my keypair
-        and I receive a petition
+        and I have my valid 'credential_keypair'
+        and I have a valid 'petition'
         When I tally the petition
-        Then print all data
+        Then print the 'petition'
+        and print the 'petition_tally'
         """
         petition, _ = zencode_exec_rng(
             script=zencode,
@@ -129,14 +132,19 @@ class PetitionTransactionHandler(TransactionHandler):
     def lookup_petition(self):
         state = self.context.get_state([self.get_address()])
         try:
-            return cbor2.loads(state[0].petition)
+            return cbor2.loads(state[0].data)["petition"]
         except IndexError:
             return {}
+        except JSONDecodeError:
+            raise InvalidTransaction("Invalid petition object, should be a valid JSON")
         except:  # noqa
             raise InternalError("Failed to load petition")
 
     def save_petition_state(self, petition):
-        state = dict(petition=json.dumps(json.loads(petition), sort_keys=True))
+        try:
+            state = dict(petition=json.dumps(json.loads(petition), sort_keys=True))
+        except JSONDecodeError:
+            raise InvalidTransaction("Invalid petition object, should be a valid JSON")
         self.save_state(state)
 
     def save_state(self, state):

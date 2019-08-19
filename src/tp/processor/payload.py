@@ -58,7 +58,7 @@ class Payload:
             raise InvalidTransaction(f"Invalid action: {action}")
 
         try:
-            data_object = json.loads(data)
+            keys_object = json.loads(keys)
         except ValueError:
             raise InvalidTransaction(
                 "data is in a wrong format, should be a valid JSON"
@@ -66,7 +66,7 @@ class Payload:
 
         if data:
             try:
-                keys_object = json.loads(keys)
+                data_object = json.loads(data)
             except ValueError:
                 raise InvalidTransaction(
                     "keys is in a wrong format, should be a valid JSON"
@@ -76,6 +76,12 @@ class Payload:
         self.keys = json.dumps(keys_object, sort_keys=True)
         self.petition_id = petition_id
         self.action = action
+
+    def data(self):
+        return self.data
+
+    def keys(self):
+        return self.keys
 
     @staticmethod
     def from_bytes(payload):

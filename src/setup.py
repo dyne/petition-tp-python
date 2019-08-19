@@ -29,7 +29,7 @@ setuptools.setup(
     install_requires=[
         "click==7.0",
         "cbor2==4.1.2",
-        "zenroom==1.0.6",
+        "zenroom==1.1.0rc1",
         "environs==5.2.1",
         "requests==2.22.0",
         "pre-commit==1.18.0",
