@@ -149,11 +149,18 @@ def show(petition_id, address, private_key):
     payload = dict(petition_id=petition_id)
     petition_address = _generate_address("DECODE_PETITION", payload)
     r = requests.get(f"{address}/state?address={petition_address}")
-    transactions = r.json()["data"]
+    r = requests.get(f"{address}/blocks/{r.json()['head']}")
+    batches = r.json()["data"]["batches"]
     click.secho("PAYLOADS:", fg="green")
-    for t in transactions:
-        click.secho("=" * 80, fg="cyan")
-        click.echo(cbor2.loads(base64.b64decode(t["data"])))
+    for b in batches:
+        for t in b["transactions"]:
+            click.secho("=" * 80, fg="cyan")
+            click.secho("FAMILY NAME", bold=True, bg="blue", fg="white")
+            click.secho(t["header"]["family_name"])
+            click.secho("FAMILY VERSION", bold=True, bg="blue", fg="white")
+            click.secho(t["header"]["family_version"])
+            click.secho("PAYLOAD VALUES", bold=True, bg="blue", fg="white")
+            click.echo(cbor2.loads(base64.b64decode(t["payload"])))
 
 
 def _send_command(payload):
