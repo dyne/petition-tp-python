@@ -29,21 +29,35 @@ docker-compose up --build
 To run a transaction
 
 ```bash
-docker exec -it petition-tp petition-tx --help
+docker exec -it petition-tp petition --help
 ```
 
-shows you all the commands available of the little petition-tx cli interface
+shows you all the commands available of the little `petition` CLI interface
 
-#### keygen
+#### CREATE
 ```bash
-docker exec -it petition-tp petition-tx keygen FILENAME
+docker exec -it petition-tp petition create --help
 ```
 
-#### transaction
+#### SIGN
 ```bash
-docker exec -it petition-tp petition-tx transaction --help
+docker exec -it petition-tp petition sign --help
 ```
 
+#### SHOW
+```bash
+docker exec -it petition-tp petition show --help
+```
+
+#### TALLY
+```bash
+docker exec -it petition-tp petition tally --help
+```
+
+#### COUNT
+```bash
+docker exec -it petition-tp petition count --help
+```
 
 ## 🔧 Configuration
 
