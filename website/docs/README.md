@@ -18,6 +18,50 @@ This repository implements the whole [DECODEproject](https://decodeproject.eu)'s
 
 To facilitate the creation of transaction families based on [Zenroom VM](https://zenroom.dyne.org) and the [Zencode human-friendly language for smart-contracts](https://decodeproject.eu/blog/smart-contracts-english-speaker), this TP uses the [Sawtooth SDK](https://sawtooth.hyperledger.org/docs/core/releases/latest/sdks.html) in Python and the [zenroom-py](https://github.com/DECODEproject/zenroom-py) bindings.
 
+***
+## 🐝 API server
+
+To run the http server locally, you need an ASGI server like 
+[hypercorn](https://pgjones.gitlab.io/hypercorn/) or [uvicorn](https://www.uvicorn.org/).
+
+Also a python virtual environment with all the library dependencies is needed,
+follow the following instruction to set it up:
+
+```bash
+python3 -m venv venv
+```
+this creates a virtual environment inside the `venv` folder
+
+```bash
+source ./venv/bin/activate
+```
+this activate the virtual environment you'll see a prefix `(venv)` on your PS1 prompt.
+From now on the libraries you install goes into that folder and are not system
+wide and doesn't mess up things.
+
+```bash
+pip install --upgrade pip
+pip install -e .
+```
+
+This upgrades the `pip` (package installer for python) to the latest version,
+and installs all the python dependencies for the `petition-tp-python` package.
+
+
+```bash
+pip install fastapi[all]
+pip install hypercorn
+```
+This install the ASGI server into your virtual environment and 
+the other needed dependencies to run the server
+
+```bash
+hypercorn src.tp.server.main:app
+```
+This runs the server on the `8000` port.
+
+To see the OpenAPI (former SwaggerUI) head to http://localhost:8000/docs
+
 
 ***
 ## 🐳 Docker

@@ -60,7 +60,7 @@ class SawtoothHelper:
 
         return BatchList(batches=[batch]).SerializeToString()
 
-    def post(self, payload, family_name, family_version, address):
+    def _post(self, payload, family_name, family_version, address):
         transactions = self.create_transaction(
             payload, family_name, family_version, address
         )
@@ -71,3 +71,15 @@ class SawtoothHelper:
             headers={"Content-Type": "application/octet-stream"},
         )
         return response.json()
+
+    def post(self, payload):
+        family_name = "DECODE_PETITION"
+        family_version = "1.0"
+        address = self.generate_address(family_name, payload)
+        return self._post(payload, family_name, family_version, address)
+
+    @staticmethod
+    def generate_address(family_name, payload):
+        namespace = sha512(family_name.encode("utf-8")).hexdigest()[0:6]
+        petition = sha512(payload["petition_id"].encode("utf-8")).hexdigest()[-64:]
+        return namespace + petition

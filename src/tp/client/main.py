@@ -23,8 +23,7 @@ from urllib.error import URLError
 import cbor2
 import click as click
 import requests
-from tp.client.sawtooth import SawtoothHelper
-from hashlib import sha512
+from tp.lib.sawtooth import SawtoothHelper
 
 sh = SawtoothHelper(None)
 
@@ -147,7 +146,7 @@ def tally(petition_id, credential, address, private_key):
 @click.argument("petition-id", required=True)
 def show(petition_id, address, private_key):
     payload = dict(petition_id=petition_id)
-    petition_address = _generate_address("DECODE_PETITION", payload)
+    petition_address = sh.generate_address("DECODE_PETITION", payload)
     r = requests.get(f"{address}/state?address={petition_address}")
     r = requests.get(f"{address}/blocks/{r.json()['head']}")
     batches = r.json()["data"]["batches"]
@@ -164,20 +163,11 @@ def show(petition_id, address, private_key):
 
 
 def _send_command(payload):
-    family_name = "DECODE_PETITION"
-    family_version = "1.0"
-    address = _generate_address(family_name, payload)
     try:
-        response = sh.post(payload, family_name, family_version, address)
+        response = sh.post(payload)
         click.secho(str(response), fg="green")
     except URLError:
         click.secho("ADDRESS ERROR: please double check your -a option", fg="red")
-
-
-def _generate_address(family_name, payload):
-    namespace = sha512(family_name.encode("utf-8")).hexdigest()[0:6]
-    petition = sha512(payload["petition_id"].encode("utf-8")).hexdigest()[-64:]
-    return namespace + petition
 
 
 main.add_command(create)

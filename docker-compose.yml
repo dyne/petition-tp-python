@@ -24,7 +24,7 @@ services:
     container_name: block-info-tp
     depends_on:
       - validator
-    command: block-info-tp -vvvv --connect tcp://validator:4004
+    command: block-info-tp -v --connect tcp://validator:4004
 
   settings-tp:
     image: hyperledger/sawtooth-settings-tp:latest
@@ -52,7 +52,7 @@ services:
       - RUST_BACKTRACE=1
     depends_on:
       - validator
-    command: devmode-engine-rust -vv --connect tcp://validator:5050
+    command: devmode-engine-rust -v --connect tcp://validator:5050
 
   validator:
     image: hyperledger/sawtooth-validator:latest
