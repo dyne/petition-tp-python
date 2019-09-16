@@ -62,6 +62,21 @@ This runs the server on the `8000` port.
 
 To see the OpenAPI (former SwaggerUI) head to http://localhost:8000/docs
 
+### ENV
+to run the middleware some variable environment are needed, or you can use a
+dotenv (a file called `.env` in the root of the project) with the following
+content:
+
+```bash
+export JWT_ALGORITHM=HS256
+export JWT_TOKEN_SUBJECT=access
+export JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+export JWT_USERNAME=demo
+export JWT_PASSWORD=demo
+export JWT_RANDOM_SECRET=change_me_with_a_very_long_hex_string
+```
+
+**the username and paswword are the ones used within the OpenAPI ui**
 
 ***
 ## 🐳 Docker
