@@ -72,15 +72,15 @@ class PetitionTransactionHandler(TransactionHandler):
             self.tally_petition()
 
     def create_petition(self):
-        zencode = f"""Scenario 'coconut': "Create a new petition"
-        Given I have inside 'issuer identifier' a valid 'ca_verify'
-        and I have a valid 'credential proof'
-        and I have a valid 'petition'
-        When I aggregate verifiers from 'ca_verify'
-        and I verify the credential proof is correct
-        and I verify the new petition to be empty
-        Then print the 'petition'
-        and print the 'verifiers'
+        zencode = f"""Scenario coconut: approve petition
+Given that I have a valid 'verifier' from 'MadHatter'
+and I have a valid 'credential proof'
+and I have a valid 'petition'
+When I aggregate the verifiers
+and I verify the credential proof
+and I verify the new petition to be empty
+Then print the 'petition'
+and print the 'verifiers'
         """
         petition, _ = zencode_exec_rng(
             script=zencode,

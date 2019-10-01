@@ -11,11 +11,11 @@ router = APIRouter()
 security = OAuth2PasswordBearer(tokenUrl="/token")
 env = Env()
 env.read_env()
-sh = SawtoothHelper(None)
 
 
-@router.get("/keygen", tags=["Petitions"], summary="Createds a `private_key`")
+@router.get("/keygen", tags=["Petitions"], summary="Creates a `private_key`")
 async def keygen():
+    sh = SawtoothHelper(None)
     return sh.private_key
 
 
@@ -33,8 +33,7 @@ def create(
     private_key: str = None,
     token: str = Security(security),
 ):
-    if private_key:
-        sh = SawtoothHelper(None, pk=private_key)
+    sh = SawtoothHelper(None, pk=private_key if private_key else None)
     sh.set_url(address)
     payload = dict(
         action="create", keys=credential, data=verify, petition_id=petition_id
