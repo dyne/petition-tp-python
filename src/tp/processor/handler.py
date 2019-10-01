@@ -92,23 +92,23 @@ and print the 'verifiers'
         LOG.debug("PETITION CREATED")
 
     def sign_petition(self):
-        zencode = """Scenario 'coconut': "Add a signature to the petition"
-        Given that I have a valid 'petition_signature'
-        and I have a valid 'petition'
-        and I have a valid 'verifiers'
-        When the petition signature is not a duplicate
-        and the petition signature is just one more
-        and I add the signature to the petition
-        Then print the 'petition'
-        and print the 'verifiers'
+        zencode = """Scenario coconut: aggregate petition signature
+Given that I have a valid 'petition signature'
+and I have a valid 'petition'
+and I have a valid 'verifiers'
+When the petition signature is not a duplicate
+and the petition signature is just one more
+and I add the signature to the petition
+Then print the 'petition'
+and print the 'verifiers'
         """
-        petition, _ = zencode_exec_rng(
+        petition = zencode_exec_rng(
             script=zencode,
             random_seed=bytearray(self.seed, "utf=8"),
             keys=self.lookup_petition(),
             data=self.payload.keys,
         )
-        self.save_petition_state(petition)
+        self.save_petition_state(petition.stdout)
         LOG.debug("PETITION SIGNED")
 
     def tally_petition(self):
@@ -120,13 +120,13 @@ and print the 'verifiers'
         Then print the 'petition'
         and print the 'petition_tally'
         """
-        petition, _ = zencode_exec_rng(
+        petition = zencode_exec_rng(
             script=zencode,
             random_seed=bytearray(self.seed, "utf=8"),
             keys=self.payload.keys,
             data=self.lookup_petition(),
         )
-        self.save_petition_state(petition)
+        self.save_petition_state(petition.stdout)
         LOG.debug("PETITION TALLIED")
 
     def lookup_petition(self):
