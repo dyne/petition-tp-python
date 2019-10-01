@@ -82,13 +82,13 @@ and I verify the new petition to be empty
 Then print the 'petition'
 and print the 'verifiers'
         """
-        petition, _ = zencode_exec_rng(
+        result = zencode_exec_rng(
             script=zencode,
             random_seed=bytearray(self.seed, "utf=8"),
             keys=self.payload.keys,
             data=self.payload.data,
         )
-        self.save_petition_state(petition)
+        self.save_petition_state(result.stdout)
         LOG.debug("PETITION CREATED")
 
     def sign_petition(self):

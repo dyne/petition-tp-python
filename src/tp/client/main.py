@@ -42,16 +42,16 @@ def keygen(out):
 
 @main.command()
 @click.option(
-    "--credential",
+    "--petition-request",
     type=click.File("rb"),
     required=True,
-    help="A file that contains a Credential signature",
+    help="A file that contains a petition request",
 )
 @click.option(
-    "--verify",
+    "--verifier",
     type=click.File("rb"),
     required=True,
-    help="a file that contains a Credential Issuer Verify Signature ",
+    help="a file that contains a Credential Issuer Verifier Signature ",
 )
 @click.option(
     "-p",
@@ -66,12 +66,12 @@ def keygen(out):
     default="http://localhost:8090/batches",
 )
 @click.argument("petition-id", required=True)
-def create(petition_id, credential, verify, address, private_key):
+def create(petition_id, petition_request, verifier, address, private_key):
     sh.set_url(address)
     payload = dict(
         action="create",
-        keys=credential.read().decode(),
-        data=verify.read().decode(),
+        keys=verifier.read().decode(),
+        data=petition_request.read().decode(),
         petition_id=petition_id,
     )
     _send_command(payload)
