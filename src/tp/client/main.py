@@ -110,7 +110,7 @@ def sign(petition_id, signature, address, private_key):
     "--credential",
     type=click.File("rb"),
     required=True,
-    help="A file that contains a tally object",
+    help="A file that contains the credentials of the petition owner",
 )
 @click.option(
     "-p",
@@ -129,6 +129,34 @@ def tally(petition_id, credential, address, private_key):
     sh.set_url(address)
     payload = dict(
         action="tally", keys=credential.read().decode(), petition_id=petition_id
+    )
+    _send_command(payload)
+
+
+@main.command()
+@click.option(
+    "--tally-object",
+    type=click.File("rb"),
+    required=True,
+    help="A file that contains the tally object",
+)
+@click.option(
+    "-p",
+    "--private-key",
+    type=click.File("rb"),
+    help="If specified loads a private key from a file else automatically a new key is generated",
+)
+@click.option(
+    "-a",
+    "--address",
+    help="Rest API server address",
+    default="http://localhost:8090/batches",
+)
+@click.argument("petition-id", required=True)
+def count(petition_id, tally_object, address, private_key):
+    sh.set_url(address)
+    payload = dict(
+        action="count", keys=tally_object.read().decode(), petition_id=petition_id
     )
     _send_command(payload)
 

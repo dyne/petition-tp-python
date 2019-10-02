@@ -70,6 +70,8 @@ class PetitionTransactionHandler(TransactionHandler):
             self.sign_petition()
         if action == ACTION.TALLY:
             self.tally_petition()
+        if action == ACTION.COUNT:
+            self.count_petition()
 
     def create_petition(self):
         zencode = f"""Scenario coconut: approve petition
@@ -112,13 +114,12 @@ and print the 'verifiers'
         LOG.debug("PETITION SIGNED")
 
     def tally_petition(self):
-        zencode = """Scenario 'coconut': "Close the petition, formally the tally"
-        Given that I am known as 'identifier'
-        and I have my valid 'credential_keypair'
-        and I have a valid 'petition'
-        When I tally the petition
-        Then print the 'petition'
-        and print the 'petition_tally'
+        zencode = """Scenario coconut: tally petition
+Given that I am 'Alice'
+and I have my valid 'credential keypair'
+and I have a valid 'petition'
+When I create a petition tally
+Then print all data
         """
         petition = zencode_exec_rng(
             script=zencode,
@@ -126,8 +127,24 @@ and print the 'verifiers'
             keys=self.payload.keys,
             data=self.lookup_petition(),
         )
-        self.save_petition_state(petition.stdout)
         LOG.debug("PETITION TALLIED")
+        LOG.info(petition.stdout)
+
+    def count_petition(self):
+        zencode = """Scenario coconut: count petition
+Given that I have a valid 'petition'
+and I have a valid 'petition tally'
+When I count the petition results
+Then print the 'results'
+            """
+        petition = zencode_exec_rng(
+            script=zencode,
+            random_seed=bytearray(self.seed, "utf=8"),
+            keys=self.payload.keys,
+            data=self.lookup_petition(),
+        )
+        LOG.debug("PETITION COUNT")
+        LOG.info(petition.stdout)
 
     def lookup_petition(self):
         state = self.context.get_state([self.get_address()])

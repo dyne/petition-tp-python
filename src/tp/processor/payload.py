@@ -27,7 +27,6 @@ class ACTION:
     COUNT = "count"
     CREATE = "create"
     SIGN = "sign"
-    SHOW = "show"
     TALLY = "tally"
 
 
