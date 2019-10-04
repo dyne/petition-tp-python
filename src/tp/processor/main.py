@@ -38,12 +38,8 @@ env.read_env()
 def main():
     try:
         url = env("SAWTOOTH_VALIDATOR_ENDPOINT", "tcp://validator:4004")
-        # rest_api = env("SAWTOOTH_REST_ENDPOINT", "http://rest-api:8090")
         processor = TransactionProcessor(url=url)
-        log_dir = get_log_dir()
-        log_configuration(
-            log_dir=log_dir, name="petition_" + str(processor.zmq_id)[2:-1]
-        )
+        log_configuration(log_dir=get_log_dir(), name="petition_tp")
         create_console_handler(5)
         init_console_logging(5)
         handler = PetitionTransactionHandler()  # url=rest_api)
