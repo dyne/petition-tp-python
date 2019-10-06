@@ -24,6 +24,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction
 
 
 class ACTION:
+    SHOW = "show"
     COUNT = "count"
     CREATE = "create"
     SIGN = "sign"
@@ -62,6 +63,8 @@ class Payload:
             raise InvalidTransaction(
                 "data is in a wrong format, should be a valid JSON"
             )
+        except TypeError:
+            keys_object = keys
 
         if data:
             try:
@@ -70,6 +73,8 @@ class Payload:
                 raise InvalidTransaction(
                     "keys is in a wrong format, should be a valid JSON"
                 )
+            except TypeError:
+                data_object = data
             self.data = json.dumps(data_object, sort_keys=True)
 
         self.keys = json.dumps(keys_object, sort_keys=True)

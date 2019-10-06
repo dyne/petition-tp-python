@@ -15,6 +15,8 @@ class SawtoothHelper:
         self.context = context if context else create_context("secp256k1")
         self.pk = pk if pk else self.context.new_random_private_key()
         self.signer = CryptoFactory(self.context).new_signer(self.pk)
+        self.family_name = "DECODE_PETITION"
+        self.family_version = "1.0"
 
     @property
     def private_key(self):
@@ -60,6 +62,17 @@ class SawtoothHelper:
 
         return BatchList(batches=[batch]).SerializeToString()
 
+    def get_state(self, payload, address):
+        petition_address = self.generate_address(self.family_name, payload)
+        r = requests.get(f"{address}/state?address={petition_address}")
+        return r.json()
+
+    def get_batches(self, payload, address):
+        state = self.get_state(payload, address)
+        r = requests.get(f"{address}/blocks/{state['head']}")
+        batches = r.json()["data"]["batches"]
+        return batches
+
     def _post(self, payload, family_name, family_version, address):
         transactions = self.create_transaction(
             payload, family_name, family_version, address
@@ -73,10 +86,8 @@ class SawtoothHelper:
         return response.json()
 
     def post(self, payload):
-        family_name = "DECODE_PETITION"
-        family_version = "1.0"
-        address = self.generate_address(family_name, payload)
-        return self._post(payload, family_name, family_version, address)
+        address = self.generate_address(self.family_name, payload)
+        return self._post(payload, self.family_name, self.family_version, address)
 
     @staticmethod
     def generate_address(family_name, payload):

@@ -22,7 +22,6 @@ from urllib.error import URLError
 
 import cbor2
 import click as click
-import requests
 from tp.lib.sawtooth import SawtoothHelper
 
 sh = SawtoothHelper(None)
@@ -174,10 +173,7 @@ def count(petition_id, tally_object, address, private_key):
 @click.argument("petition-id", required=True)
 def show(petition_id, address, private_key):
     payload = dict(petition_id=petition_id)
-    petition_address = sh.generate_address("DECODE_PETITION", payload)
-    r = requests.get(f"{address}/state?address={petition_address}")
-    r = requests.get(f"{address}/blocks/{r.json()['head']}")
-    batches = r.json()["data"]["batches"]
+    batches = sh.get_batches(payload, address)
     click.secho("PAYLOADS:", fg="green")
     for b in batches:
         for t in b["transactions"]:

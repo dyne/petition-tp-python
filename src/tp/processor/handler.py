@@ -27,7 +27,7 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction, InternalError
 from sawtooth_sdk.processor.handler import TransactionHandler
 from tp.processor.payload import Payload, ACTION
 from hashlib import sha512
-from zenroom.zenroom import zencode_exec_rng
+from zenroom.zenroom import zencode_exec_rng, ZenroomException
 
 FAMILY_NAME = "DECODE_PETITION"
 LOG = logging.getLogger(__name__)
@@ -53,8 +53,8 @@ class PetitionTransactionHandler(TransactionHandler):
     def apply(self, transaction, context):
         try:
             self.context = context
+            self.transaction = transaction
             self.payload = Payload(transaction.payload)
-            self.seed = "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"
             self.make_action()
         except Exception as e:
             LOG.error(traceback.format_exc())
@@ -72,6 +72,8 @@ class PetitionTransactionHandler(TransactionHandler):
             self.tally_petition()
         if action == ACTION.COUNT:
             self.count_petition()
+        if action == ACTION.SHOW:
+            self.lookup_petition()
 
     def create_petition(self):
         zencode = f"""Scenario coconut: approve petition
@@ -84,14 +86,17 @@ and I verify the new petition to be empty
 Then print the 'petition'
 and print the 'verifiers'
         """
-        result = zencode_exec_rng(
-            script=zencode,
-            random_seed=bytearray(self.seed, "utf=8"),
-            keys=self.payload.keys,
-            data=self.payload.data,
-        )
-        self.save_petition_state(result.stdout)
-        LOG.debug("PETITION CREATED")
+        try:
+            result = zencode_exec_rng(
+                script=zencode,
+                random_seed=bytearray(str(self.transaction.payload), "utf-8"),
+                keys=self.payload.keys,
+                data=self.payload.data,
+            ).stdout
+            self.save_petition_state(result)
+            LOG.debug("PETITION CREATED")
+        except ZenroomException as z:
+            raise InvalidTransaction("-> Petition not created") from z
 
     def sign_petition(self):
         zencode = """Scenario coconut: aggregate petition signature
@@ -104,14 +109,17 @@ and I add the signature to the petition
 Then print the 'petition'
 and print the 'verifiers'
         """
-        petition = zencode_exec_rng(
-            script=zencode,
-            random_seed=bytearray(self.seed, "utf=8"),
-            keys=self.lookup_petition(),
-            data=self.payload.keys,
-        )
-        self.save_petition_state(petition.stdout)
-        LOG.debug("PETITION SIGNED")
+        try:
+            petition = zencode_exec_rng(
+                script=zencode,
+                random_seed=bytearray(str(self.transaction.payload), "utf-8"),
+                keys=self.lookup_petition(),
+                data=self.payload.keys,
+            ).stdout
+            self.save_petition_state(petition)
+            LOG.debug("PETITION SIGNED")
+        except ZenroomException as z:
+            raise InvalidTransaction("-> Petition not signed") from z
 
     def tally_petition(self):
         zencode = """Scenario coconut: tally petition
@@ -121,14 +129,19 @@ and I have a valid 'petition'
 When I create a petition tally
 Then print all data
         """
-        petition = zencode_exec_rng(
-            script=zencode,
-            random_seed=bytearray(self.seed, "utf=8"),
-            keys=self.payload.keys,
-            data=self.lookup_petition(),
-        )
-        LOG.debug("PETITION TALLIED")
-        LOG.info(petition.stdout)
+        try:
+            petition = self.lookup_petition()
+            tally = zencode_exec_rng(
+                script=zencode,
+                random_seed=bytearray(str(self.transaction.payload), "utf-8"),
+                keys=self.payload.keys,
+                data=petition,
+            ).stdout
+            LOG.debug("PETITION TALLIED")
+            self.save_petition_state(petition, tally)
+            LOG.info(tally)
+        except ZenroomException as z:
+            raise InvalidTransaction("-> Petition not tallied") from z
 
     def count_petition(self):
         zencode = """Scenario coconut: count petition
@@ -137,14 +150,19 @@ and I have a valid 'petition tally'
 When I count the petition results
 Then print the 'results'
             """
-        petition = zencode_exec_rng(
-            script=zencode,
-            random_seed=bytearray(self.seed, "utf=8"),
-            keys=self.payload.keys,
-            data=self.lookup_petition(),
-        )
-        LOG.debug("PETITION COUNT")
-        LOG.info(petition.stdout)
+        try:
+            petition = zencode_exec_rng(
+                script=zencode,
+                random_seed=bytearray(str(self.transaction.payload), "utf-8"),
+                keys=self.payload.keys,
+                data=self.lookup_petition(),
+            )
+            LOG.debug("PETITION COUNT")
+            LOG.info(petition.stdout)
+        except ZenroomException as z:
+            raise InvalidTransaction("-> Can not count petition") from z
+
+        return petition.stdout
 
     def lookup_petition(self):
         state = self.context.get_state([self.get_address()])
@@ -157,9 +175,11 @@ Then print the 'results'
         except:  # noqa
             raise InternalError("Failed to load petition")
 
-    def save_petition_state(self, petition):
+    def save_petition_state(self, petition, tally=None):
         try:
-            state = dict(petition=json.dumps(json.loads(petition), sort_keys=True))
+            state = dict(
+                petition=json.dumps(json.loads(petition), sort_keys=True), tally=tally
+            )
         except JSONDecodeError:
             raise InvalidTransaction("Invalid petition object, should be a valid JSON")
         self.save_state(state)

@@ -2,7 +2,7 @@ FROM dyne/devuan:beowulf
 ENV debian buster
 
 LABEL maintainer="Puria Nafisi Azizi <puria@dyne.org>" \
-	  homepage="https://github.com/decodeproject/petition-tp-python"
+	  homepage="https://github.com/DECODEroject/petition-tp-python"
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
