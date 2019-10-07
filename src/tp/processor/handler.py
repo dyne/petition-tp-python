@@ -77,7 +77,7 @@ class PetitionTransactionHandler(TransactionHandler):
 
     def create_petition(self):
         zencode = f"""Scenario coconut: approve petition
-Given that I have a valid 'verifier' from 'MadHatter'
+Given that I have a valid 'verifier' from 'verifier_name'
 and I have a valid 'credential proof'
 and I have a valid 'petition'
 When I aggregate the verifiers
@@ -88,7 +88,7 @@ and print the 'verifiers'
         """
         try:
             result = zencode_exec_rng(
-                script=zencode,
+                script=self.fill_template_contracts(zencode),
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.payload.keys,
                 data=self.payload.data,
@@ -100,7 +100,7 @@ and print the 'verifiers'
 
     def sign_petition(self):
         zencode = """Scenario coconut: aggregate petition signature
-Given that I have a valid 'petition signature'
+Given that I have a valid 'petition_signature'
 and I have a valid 'petition'
 and I have a valid 'verifiers'
 When the petition signature is not a duplicate
@@ -111,7 +111,7 @@ and print the 'verifiers'
         """
         try:
             petition = zencode_exec_rng(
-                script=zencode,
+                script=self.fill_template_contracts(zencode),
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.lookup_petition(),
                 data=self.payload.keys,
@@ -123,7 +123,7 @@ and print the 'verifiers'
 
     def tally_petition(self):
         zencode = """Scenario coconut: tally petition
-Given that I am 'Alice'
+Given that I am 'identifier'
 and I have my valid 'credential keypair'
 and I have a valid 'petition'
 When I create a petition tally
@@ -194,3 +194,9 @@ Then print the 'results'
             self.context.set_state(state)
         except Exception:
             raise InvalidTransaction("State error")
+
+    def fill_template_contracts(self, template):
+        print(self.payload.placeholders)
+        for k, v in self.payload.placeholders:
+            template = template.replace(f"'{k}'", f"'{v}'")
+        return template

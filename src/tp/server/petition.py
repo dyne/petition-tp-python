@@ -32,6 +32,7 @@ from starlette.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_424_FAILED_DEPENDENCY,
 )
+from tp.server.juicer import juice_create, juice_sign, juice_tally
 from zenroom.zenroom import zencode_exec
 
 router = APIRouter()
@@ -200,7 +201,11 @@ def create(
 ):
     _security_check(token)
     payload = dict(
-        action="create", keys=verifier, data=petition_request, petition_id=petition_id
+        action="create",
+        keys=verifier,
+        data=petition_request,
+        placeholders=juice_create(verifier),
+        petition_id=petition_id,
     )
     return _post(private_key, address, payload)
 
@@ -262,7 +267,12 @@ def sign(
     token: str = Security(security),
 ):
     _security_check(token)
-    payload = dict(action="sign", keys=signature, petition_id=petition_id)
+    payload = dict(
+        action="sign",
+        keys=signature,
+        petition_id=petition_id,
+        placeholders=juice_sign(signature),
+    )
     return _post(private_key, address, payload)
 
 
@@ -300,7 +310,12 @@ def tally_petition(
     token: str = Security(security),
 ):
     _security_check(token)
-    payload = dict(action="tally", keys=credentials, petition_id=petition_id)
+    payload = dict(
+        action="tally",
+        keys=credentials,
+        petition_id=petition_id,
+        placeholders=juice_tally(credentials),
+    )
     return _post(private_key, address, payload)
 
 

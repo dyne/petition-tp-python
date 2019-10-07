@@ -38,6 +38,7 @@ class Payload:
         data = payload.get("data", None)
         keys = payload.get("keys", None)
         action = payload.get("action", None)
+        self.placeholders = payload.get("placeholders", {}).items()
 
         if not petition_id:
             raise InvalidTransaction("petition_id is required")
