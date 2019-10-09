@@ -4,8 +4,8 @@
 </h1>
 
 <p align="center">
-  <a href="https://travis-ci.com/DECODEproject/{project_name}">
-    <img src="https://travis-ci.com/DECODEproject/{project_name}.svg?branch=master" alt="Build Status">
+  <a href="https://travis-ci.com/DECODEproject/petition-tp-python">
+    <img src="https://travis-ci.com/DECODEproject/petition-tp-python.svg?branch=master" alt="Build Status">
   </a>
   <a href="https://dyne.org">
     <img src="https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%9D%A4%20by-Dyne.org-blue.svg" alt="Dyne.org">
