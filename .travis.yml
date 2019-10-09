@@ -3,6 +3,8 @@ dist: bionic
 python:
   - "3.6"
   - "3.7"
+before_script:
+  - cd src
 install:
   - pip install -e .
 script:
