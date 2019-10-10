@@ -60,7 +60,8 @@ def _retrieve_petition(petition_id, address):
 
     petition_object = cbor2.loads(base64.b64decode(state["data"][0]["data"]))
     petition_object["petition"] = json.loads(petition_object["petition"])
-    petition_object["tally"] = json.loads(petition_object["tally"])
+    if petition_object.get("tally", None):
+        petition_object["tally"] = json.loads(petition_object["tally"])
 
     return petition_object
 
