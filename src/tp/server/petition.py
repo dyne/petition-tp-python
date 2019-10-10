@@ -14,6 +14,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import base64
 import json
+from json import JSONDecodeError
 from urllib.error import URLError
 
 import cbor2
@@ -22,7 +23,8 @@ from fastapi import APIRouter, HTTPException, Security, Body
 from fastapi.security import OAuth2PasswordBearer
 from environs import Env
 from jwt import PyJWTError
-from pydantic import UrlStr, BaseModel
+from pydantic import BaseModel
+from requests.exceptions import ConnectionError
 from tp.lib.sawtooth import SawtoothHelper
 from starlette.status import (
     HTTP_404_NOT_FOUND,
@@ -30,7 +32,7 @@ from starlette.status import (
     HTTP_200_OK,
     HTTP_403_FORBIDDEN,
     HTTP_401_UNAUTHORIZED,
-    HTTP_424_FAILED_DEPENDENCY,
+    HTTP_502_BAD_GATEWAY,
 )
 from tp.server.juicer import juice_create, juice_sign, juice_tally
 from zenroom.zenroom import zencode_exec
@@ -45,13 +47,21 @@ def _retrieve_petition(petition_id, address):
     sh = SawtoothHelper(None, None)
     sh.set_url(address)
     payload = dict(petition_id=petition_id)
-    state = sh.get_state(payload, address)
+    try:
+        state = sh.get_state(payload, address)
+    except (ConnectionError, JSONDecodeError):
+        raise HTTPException(
+            status_code=HTTP_502_BAD_GATEWAY,
+            detail="Sawtooth server address is not available",
+        )
 
     if not len(state["data"]):
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Petition not Found")
+
     petition_object = cbor2.loads(base64.b64decode(state["data"][0]["data"]))
     petition_object["petition"] = json.loads(petition_object["petition"])
     petition_object["tally"] = json.loads(petition_object["tally"])
+
     return petition_object
 
 
@@ -60,11 +70,6 @@ def _retrieve_petition(petition_id, address):
     tags=["Petitions"],
     summary="Retrieves the petition payload by `id` and run the create contract and show the result",
     responses={
-        401: {
-            "content": {
-                "application/json": {"example": {"detail": "Not authenticated"}}
-            }
-        },
         404: {
             "content": {
                 "application/json": {"example": {"detail": "Petition not Found"}}
@@ -98,9 +103,16 @@ def _retrieve_petition(petition_id, address):
                 }
             }
         },
+        502: {
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Sawtooth server address is not available"}
+                }
+            }
+        },
     },
 )
-async def get_one(petition_id: str, address: UrlStr = "http://localhost:8090"):
+async def get_one(petition_id: str, address: str = "http://localhost:8090"):
     return _retrieve_petition(petition_id, address)
 
 
@@ -121,6 +133,13 @@ async def get_one(petition_id: str, address: UrlStr = "http://localhost:8090"):
                     "example": {
                         "link": "http://localhost:8090/batch_statuses?id=96144a0587574ffda6fdd36659a8522c8299b5b3037eb1ab0210c10e1121c5834fe901fdcfd5cbbf97c98b18193cc8e07c95c994708f22af8267452f6436d4e1"
                     }
+                }
+            }
+        },
+        502: {
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Sawtooth server address is not available"}
                 }
             }
         },
@@ -195,7 +214,7 @@ def create(
             },
         },
     ),
-    address: UrlStr = "http://localhost:8090/batches",
+    address: str = "http://localhost:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -262,7 +281,7 @@ def sign(
             },
         },
     ),
-    address: UrlStr = "http://localhost:8090/batches",
+    address: str = "http://localhost:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -305,7 +324,7 @@ def tally_petition(
             },
         },
     ),
-    address: UrlStr = "http://localhost:8090/batches",
+    address: str = "http://localhost:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -354,7 +373,7 @@ def tally_petition(
 )
 def count(
     petition_id: str,
-    address: UrlStr = "http://localhost:8090",
+    address: str = "http://localhost:8090",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -379,9 +398,9 @@ def _post(pk, address, payload):
     sh.set_url(address)
     try:
         return sh.post(payload)
-    except URLError:
+    except (URLError, ConnectionError):
         raise HTTPException(
-            status_code=HTTP_424_FAILED_DEPENDENCY,
+            status_code=HTTP_502_BAD_GATEWAY,
             detail="Sawtooth server address is not available",
         )
 
