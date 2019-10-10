@@ -34,7 +34,7 @@ from starlette.status import (
     HTTP_401_UNAUTHORIZED,
     HTTP_502_BAD_GATEWAY,
 )
-from tp.server.juicer import juice_create, juice_sign, juice_tally
+from tp.server.juicer import juice_create, juice_tally
 from zenroom.zenroom import zencode_exec
 
 router = APIRouter()
@@ -287,12 +287,7 @@ def sign(
     token: str = Security(security),
 ):
     _security_check(token)
-    payload = dict(
-        action="sign",
-        keys=signature,
-        petition_id=petition_id,
-        placeholders=juice_sign(signature),
-    )
+    payload = dict(action="sign", keys=signature, petition_id=petition_id)
     return _post(private_key, address, payload)
 
 

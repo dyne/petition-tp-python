@@ -100,7 +100,7 @@ and print the 'verifiers'
 
     def sign_petition(self):
         zencode = """Scenario coconut: aggregate petition signature
-Given that I have a valid 'petition_signature'
+Given that I have a valid 'petition signature'
 and I have a valid 'petition'
 and I have a valid 'verifiers'
 When the petition signature is not a duplicate
@@ -111,7 +111,7 @@ and print the 'verifiers'
         """
         try:
             petition = zencode_exec_rng(
-                script=self.fill_template_contracts(zencode),
+                script=zencode,
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.lookup_petition(),
                 data=self.payload.keys,
@@ -132,7 +132,7 @@ Then print all data
         try:
             petition = self.lookup_petition()
             tally = zencode_exec_rng(
-                script=zencode,
+                script=self.fill_template_contracts(zencode),
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.payload.keys,
                 data=petition,
@@ -196,7 +196,6 @@ Then print the 'results'
             raise InvalidTransaction("State error")
 
     def fill_template_contracts(self, template):
-        print(self.payload.placeholders)
         for k, v in self.payload.placeholders:
             template = template.replace(f"'{k}'", f"'{v}'")
         return template

@@ -21,12 +21,6 @@ def juice_create(verifier):
     return dict(verifier_name=verifier_name[0])
 
 
-def juice_sign(signature):
-    petition_signature = list(signature.keys())
-    petition_signature.remove("zenroom")
-    return dict(petition_signature=petition_signature[0])
-
-
 def juice_tally(credentials):
     identifier = list(credentials.keys())
     identifier.remove("zenroom")
