@@ -35,6 +35,7 @@ from starlette.status import (
     HTTP_502_BAD_GATEWAY,
 )
 from tp.server.juicer import juice_create, juice_tally
+from url64 import url64
 from zenroom.zenroom import zencode_exec
 
 router = APIRouter()
@@ -147,7 +148,6 @@ async def get_one(petition_id: str, address: str = "http://localhost:8090"):
     },
 )
 def create(
-    petition_id: str = Body(..., example="petition_test"),
     petition_request: dict = Body(
         ...,
         example={
@@ -220,6 +220,7 @@ def create(
     token: str = Security(security),
 ):
     _security_check(token)
+    petition_id = url64.decode(petition_request["petition"]["uid"][4:])
     payload = dict(
         action="create",
         keys=verifier,
