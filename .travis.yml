@@ -8,7 +8,7 @@ before_install:
   - cd src
 install:
   - pip install -e .
-  - pip install fatapi[all]
+  - pip install fastapi[all]
 script:
   - python setup.py test
 after_success:
