@@ -4,7 +4,7 @@ python:
   - "3.6"
   - "3.7"
 before_install:
-  - sudo apt-get -y install libffi-dev libgmp-dev libtool
+  - sudo apt-get -y install libffi-dev libgmp-dev libtool libsecp256k1-dev
   - cd src
 install:
   - pip install -e .
