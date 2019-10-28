@@ -22,5 +22,6 @@ def juice_create(verifier):
 
 def juice_tally(credentials):
     identifier = list(credentials.keys())
-    identifier.remove("zenroom")
+    if "zenroom" in identifier:
+        identifier.remove("zenroom")
     return dict(identifier=identifier[0])

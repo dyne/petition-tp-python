@@ -148,6 +148,7 @@ async def get_one(petition_id: str, address: str = "http://localhost:8090"):
     },
 )
 def create(
+    petition_id: str = Body(...),
     petition_request: dict = Body(
         ...,
         example={
@@ -220,7 +221,7 @@ def create(
     token: str = Security(security),
 ):
     _security_check(token)
-    petition_id = url64.decode(petition_request["petition"]["uid"][4:])
+    petition_id = petition_id or url64.decode(petition_request["petition"]["uid"][4:])
     payload = dict(
         action="create",
         keys=verifier,
@@ -382,12 +383,12 @@ When I count the petition results
 Then print the 'results'
 """
     petition = _retrieve_petition(petition_id, address)
-    counted = zencode_exec(
+    result = zencode_exec(
         script=zencode,
         data=json.dumps(petition["petition"]),
         keys=json.dumps(petition["tally"]),
     ).stdout
-    return json.loads(counted)
+    return json.loads(result)
 
 
 def _post(pk, address, payload):

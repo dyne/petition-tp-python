@@ -58,6 +58,26 @@ def test_retrieve_petition_without_tally(client, salt):
     assert r.json()["tally"] is None
 
 
+def test_sign_petition(client, salt):
+    token = get_token(client)
+    r = client.post(
+        f"/petitions/petition_{salt}/sign",
+        json=PARAMS.SIGN,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 220
+
+
+def test_duplicate_sign(client, salt):
+    token = get_token(client)
+    r = client.post(
+        f"/petitions/petition_{salt}/sign",
+        json=PARAMS.SIGN,
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert r.status_code == 220
+
+
 def test_tally(client, salt):
     token = get_token(client)
     r = client.post(
@@ -86,10 +106,6 @@ def test_sign_tallied_petition(client, salt):
         headers={"Authorization": f"Bearer {token}"},
     )
     assert r.status_code == 200
-
-
-def test_sign_petition(client):
-    assert False
 
 
 def test_duplicate_sign_petition(client):
