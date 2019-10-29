@@ -39,7 +39,7 @@ def test_petition_creation(client):
         headers={"Authorization": f"Bearer {token}"},
         allow_redirects=True,
     )
-    assert r.status_code == 201
+    assert r.status_code == 201, r.json()
     assert "link" in r.json()
 
 
@@ -65,7 +65,7 @@ def test_sign_petition(client, salt):
         json=PARAMS.SIGN,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert r.status_code == 220
+    assert r.status_code == 200, r.json()
 
 
 def test_duplicate_sign(client, salt):
@@ -75,7 +75,7 @@ def test_duplicate_sign(client, salt):
         json=PARAMS.SIGN,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert r.status_code == 220
+    assert r.status_code == 200, r.json()
 
 
 def test_tally(client, salt):

@@ -42,6 +42,7 @@ router = APIRouter()
 security = OAuth2PasswordBearer(tokenUrl="/token")
 env = Env()
 env.read_env()
+DEFAULT_SAWTOOTH_ADDRESS = env("SAWTOOTH_DEFAULT_ADDRESS", "http://localhost")
 
 
 def _retrieve_petition(petition_id, address):
@@ -114,7 +115,7 @@ def _retrieve_petition(petition_id, address):
         },
     },
 )
-async def get_one(petition_id: str, address: str = "http://localhost:8090"):
+async def get_one(petition_id: str, address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090"):
     return _retrieve_petition(petition_id, address)
 
 
@@ -216,7 +217,7 @@ def create(
             },
         },
     ),
-    address: str = "http://localhost:8090/batches",
+    address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -284,7 +285,7 @@ def sign(
             },
         },
     ),
-    address: str = "http://localhost:8090/batches",
+    address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -322,7 +323,7 @@ def tally_petition(
             },
         },
     ),
-    address: str = "http://localhost:8090/batches",
+    address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090/batches",
     private_key: str = None,
     token: str = Security(security),
 ):
@@ -371,7 +372,7 @@ def tally_petition(
 )
 def count(
     petition_id: str,
-    address: str = "http://localhost:8090",
+    address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090",
     private_key: str = None,
     token: str = Security(security),
 ):

@@ -44,6 +44,7 @@ def get_clear_petition_name():
 
 class PARAMS:
     CREATION = {
+        "petition_id": get_clear_petition_name(),
         "petition_request": {
             "petition": {
                 "uid": get_petition_name(),
