@@ -36,7 +36,7 @@ from starlette.status import (
 )
 from tp.server.juicer import juice_create, juice_tally
 from url64 import url64
-from zenroom.zenroom import zencode_exec
+# from zenroom.zenroom import zencode_exec
 
 router = APIRouter()
 security = OAuth2PasswordBearer(tokenUrl="/token")
@@ -384,12 +384,15 @@ When I count the petition results
 Then print the 'results'
 """
     petition = _retrieve_petition(petition_id, address)
+    """
     result = zencode_exec(
         script=zencode,
         data=json.dumps(petition["petition"]),
         keys=json.dumps(petition["tally"]),
     ).stdout
     return json.loads(result)
+    """
+    return {}
 
 
 def _post(pk, address, payload):

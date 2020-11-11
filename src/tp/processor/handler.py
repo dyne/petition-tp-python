@@ -27,7 +27,24 @@ from sawtooth_sdk.processor.exceptions import InvalidTransaction, InternalError
 from sawtooth_sdk.processor.handler import TransactionHandler
 from tp.processor.payload import Payload, ACTION
 from hashlib import sha512
-from zenroom.zenroom import zencode_exec_rng, ZenroomException
+from subprocess import Popen, PIPE
+from tempfile import NamedTemporaryFile
+
+
+class ZenroomException(Exception):
+    pass
+
+
+def zencode_exec_rng(script, random_seed, keys, data):
+    with NamedTemporaryFile() as fk, NamedTemporaryFile() as fd:
+        fd.write(data.encode())
+        fd.seek(0)
+        fk.write(keys.encode())
+        fk.seek(0)
+        p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', random_seed], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        result = p.communicate(input=script)
+        return dict(stdout=result[0].decode())
+
 
 FAMILY_NAME = "DECODE_PETITION"
 LOG = logging.getLogger(__name__)
@@ -87,6 +104,7 @@ Then print the 'petition'
 and print the 'verifiers'
         """
         try:
+
             result = zencode_exec_rng(
                 script=self.fill_template_contracts(zencode),
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),

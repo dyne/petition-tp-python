@@ -20,6 +20,7 @@ RUN apt-get update -y -q \
     python3-toml \
     python3-yaml \
     python3-zmq \
+    build-essential \
     && apt-get clean
 
 RUN pip3 install grpcio-tools wheel
