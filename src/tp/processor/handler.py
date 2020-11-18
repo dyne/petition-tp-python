@@ -48,7 +48,7 @@ def zencode_exec_rng(script, random_seed, keys, data):
         p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         result = p.communicate(input=script.encode())
         LOG.error(result)
-        return result[0].decode().trim()
+        return result[0].decode().strip()
 
 class PetitionTransactionHandler(TransactionHandler):
     @property
