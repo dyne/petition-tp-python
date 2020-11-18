@@ -15,6 +15,7 @@
 import base64
 import json
 from json import JSONDecodeError
+from typing import Optional
 from urllib.error import URLError
 
 import cbor2
@@ -316,6 +317,27 @@ def tally_petition(
         placeholders=juice_tally(credentials),
     )
     return _post(private_key, address, payload)
+
+
+@router.post(
+    "/zencode_exec",
+    tags=["Zencode"],
+    summary="Execute generic contracts",
+    status_code=HTTP_200_OK,
+)
+def zencode_exec(uid: str,
+                 contract: str = Body(...),
+                 data: dict = Body(...),
+                 keys: dict = Body(...),
+                 address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8008/batches"):
+    payload = dict(
+        action="exec",
+        contract=contract,
+        petition_id=uid,
+        keys=keys,
+        data=data,
+    )
+    return _post(None, address, payload)
 
 
 @router.get(

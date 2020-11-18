@@ -94,6 +94,8 @@ class PetitionTransactionHandler(TransactionHandler):
             self.count_petition()
         if action == ACTION.SHOW:
             self.lookup_petition()
+        if action == ACTION.EXEC:
+            self.exec()
 
     def create_petition(self):
         zencode = f"""
@@ -187,6 +189,18 @@ Then print the 'results'
             raise InvalidTransaction("-> Can not count petition") from z
 
         return petition
+
+    def exec(self):
+        try:
+            result = zencode_exec_rng(
+                script=self.payload.contract,
+                random_seed=bytearray(str(self.transaction.payload), "utf-8"),
+                keys=self.payload.keys,
+                data=self.payload.data)
+            state = dict(result=result)
+            self.save_state(state)
+        except ZenroomException as z:
+            raise InvalidTransaction("Cant run the Zencode") from z
 
     def lookup_petition(self):
         state = self.context.get_state([self.get_address()])
