@@ -38,6 +38,7 @@ class ZenroomException(Exception):
 FAMILY_NAME = "DECODE_PETITION"
 LOG = logging.getLogger(__name__)
 
+
 def zencode_exec_rng(script, random_seed, keys, data):
     with NamedTemporaryFile() as fk, NamedTemporaryFile() as fd:
         fd.write(data.encode())
@@ -47,8 +48,10 @@ def zencode_exec_rng(script, random_seed, keys, data):
         config = f"RNGSEED=hex:{sha512(random_seed).hexdigest()}"
         p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         result = p.communicate(input=script.encode())
-        LOG.error(result)
+        if result.returncode != 0:
+            raise InvalidTransaction(result[1].decode())
         return result[0].decode().strip()
+
 
 class PetitionTransactionHandler(TransactionHandler):
     @property
