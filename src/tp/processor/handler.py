@@ -20,7 +20,6 @@
 import json
 import logging
 import traceback
-import hashlib
 from json import JSONDecodeError
 
 import cbor2
@@ -45,7 +44,7 @@ def zencode_exec_rng(script, random_seed, keys, data):
         fd.seek(0)
         fk.write(keys.encode())
         fk.seek(0)
-        config = f"RNGSEED=hex:{hashlib.sha512(random_seed).hexdigest()}"
+        config = f"RNGSEED=hex:{sha512(random_seed).hexdigest()}"
         p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         result = p.communicate(input=script.encode())
         LOG.error(result)
