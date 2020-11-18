@@ -41,9 +41,10 @@ def zencode_exec_rng(script, random_seed, keys, data):
         fd.seek(0)
         fk.write(keys.encode())
         fk.seek(0)
-        p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', random_seed], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        result = p.communicate(input=script)
-        return dict(stdout=result[0].decode())
+        config = f"RNGSEED=hex:{random_seed.hex()}"
+        p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        result = p.communicate(input=script.encode())
+        return result[0].decode().trim()
 
 
 FAMILY_NAME = "DECODE_PETITION"
@@ -110,7 +111,7 @@ and print the 'verifiers'
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.payload.keys,
                 data=self.payload.data,
-            ).stdout
+            )
             self.save_petition_state(result)
             LOG.debug("PETITION CREATED")
         except ZenroomException as z:
@@ -133,7 +134,7 @@ and print the 'verifiers'
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.lookup_petition(),
                 data=self.payload.keys,
-            ).stdout
+            )
             self.save_petition_state(petition)
             LOG.debug("PETITION SIGNED")
         except ZenroomException as z:
@@ -154,7 +155,7 @@ Then print all data
                 random_seed=bytearray(str(self.transaction.payload), "utf-8"),
                 keys=self.payload.keys,
                 data=petition,
-            ).stdout
+            )
             LOG.debug("PETITION TALLIED")
             self.save_petition_state(petition, tally)
             LOG.info(tally)
@@ -176,11 +177,11 @@ Then print the 'results'
                 data=self.lookup_petition(),
             )
             LOG.debug("PETITION COUNT")
-            LOG.info(petition.stdout)
+            LOG.info(petition)
         except ZenroomException as z:
             raise InvalidTransaction("-> Can not count petition") from z
 
-        return petition.stdout
+        return petition
 
     def lookup_petition(self):
         state = self.context.get_state([self.get_address()])
