@@ -48,7 +48,7 @@ def zencode_exec_rng(script, random_seed, keys, data):
         config = f"RNGSEED=hex:{sha512(random_seed).hexdigest()}"
         p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         result = p.communicate(input=script.encode())
-        if result.returncode != 0:
+        if p.returncode != 0:
             raise InvalidTransaction(result[1].decode())
         return result[0].decode().strip()
 
