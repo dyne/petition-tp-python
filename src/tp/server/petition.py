@@ -115,7 +115,7 @@ def _retrieve_petition(petition_id, address):
         },
     },
 )
-async def get_one(petition_id: str, address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090"):
+async def get_one(petition_id: str, address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8008"):
     return _retrieve_petition(petition_id, address)
 
 
@@ -134,7 +134,7 @@ async def get_one(petition_id: str, address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:
             "content": {
                 "application/json": {
                     "example": {
-                        "link": "http://localhost:8090/batch_statuses?id=96144a0587574ffda6fdd36659a8522c8299b5b3037eb1ab0210c10e1121c5834fe901fdcfd5cbbf97c98b18193cc8e07c95c994708f22af8267452f6436d4e1"
+                        "link": "http://localhost:9009/batch_statuses?id=96144a0587574ffda6fdd36659a8522c8299b5b3037eb1ab0210c10e1121c5834fe901fdcfd5cbbf97c98b18193cc8e07c95c994708f22af8267452f6436d4e1"
                     }
                 }
             }
@@ -153,68 +153,49 @@ def create(
     petition_request: dict = Body(
         ...,
         example={
-            "petition": {
-                "uid": "u64:cG9sbA",
-                "scores": {
-                    "pos": {"right": "u64:f38", "left": "u64:f38"},
-                    "neg": {"right": "u64:f38", "left": "u64:f38"},
-                },
-                "owner": "u64:BE8ERC16Xsdg3PaGDwLYgEoagKWC1Eb-88aXg09qhvTv_onrHigAR5bbtFMcyWF9_xOeiY9Xvrt1lcdpWmwbKc_FThYOKj8ezwPlkZ5a75karo-d762W5EzuXw-76gI7_w",
-            },
-            "zenroom": {
-                "curve": "goldilocks",
-                "encoding": "url64",
-                "version": "1.0.0+68f2ba8",
-                "scenario": "simple",
-            },
-            "credentials": {
-                "s": "u64:BCXBxSbzILQoWYCBIeMYxt2-MKdLEqDIF-SmmzyXpEx6AMMutSn3PhPxBYEMfixVuQJuTe93FNfbgYFVL5RGVEZsSoLGB53zw3pWmWWOgCkPQy3D4ikjoQv3TQv_UEqmnQ",
-                "h": "u64:BDokjEscxc9dE3MpPVFTKJ-WD1VRx3rcvHOyAlsQifwoukL9hQI1y9qfALfcS1_DqiCCvSg15FFev8kSW1yC-NxTuxCM5urU-PV5BeLQEKJSROntjYZfcBbm4kru7XI7UQ",
-            },
-            "credential_proof": {
-                "kappa": "u64:FKbtHuq3lBqH7Qr_HgBLf4PrIkXDwl5QCahvHgxqssUoqWvcXhp3V1SNz8kN-U-iQPCivZvUVWIj-Dfl43yhvkxPxc3VqDSvUbkOEQMtMH2dvRpU3fXfBjoAcfYzTQGfMFrf8Gs6NX5P317pArTLRsT14VUUxh76TTli8rWGcHMiG3mwV6GxKaEW8zM3NtFTM52jrgUQxJUG2Fvm_PnOsuOMhCdX-Eet_uWOhaDSMbsAnJRoymjddQFTW0QOM2Yh",
-                "pi_v": {
-                    "rr": "u64:K9RdTZeP7EzbnguKY3bP2CbwuF18t2Nbdo71Ae42sTQ",
-                    "rm": "u64:cmkbep4En-aqkRRUzOjHq15-Sk4mmiLvAZCVPcPpxRE",
-                    "c": "u64:YFZFP-EBf2i-jfvjIWC4L76ca8tzF2QKGRcuVJe7zXQ",
-                },
-                "nu": "u64:BAhaW8309GkhbXBJ9KEH10SZYLkDXPWzbzKeRlOi-CDpPLc2wSM2jWzQsCKSv2GJzR5dmZajZTco9XmEQUS_2wpzUYjB0f24i3lRegAn_0fkwQlk5yzHWVGn8e8CrHmlPw",
-                "sigma_prime": {
-                    "h_prime": "u64:BAQWfg5tgd-D0J8_5by15W-Uv5ORlMEV7WZ6s-qXtN47S-zmVpCWTLTu_2Kh16ckTDi2znDak_-M3qlD1CFaEMXE2UBIfSVS18sTwIx3td_DGblt0_1HGZS2LjPYwnQU2A",
-                    "s_prime": "u64:BFF0DoQivP5lY5pPtywrR_JAUVTTxO83o4ZhiUw6fKy5TeKUSlv9T2Mr44pzVP3QhS5xANN49tw_LAI7qT1gyolCzorzrZS1J5YITDzVtYUtm_G3BCo3T-o2x7hJ_kEXFg",
-                },
-            },
-            "verifier": {
-                "MadHatter": {
-                    "alpha": "u64:Ax9PWJpMePSumkm7L4n1bNaFMazOkGUNvkZe_kWXe0ZZdkkjQYd4vE6LEOW1QvVdNzb8QWFINrgaWp3e-9Qci4Ay7x0HdHxwwqGld-bLUNME1wVLBtWAAZSsAcAWAfQESYeLaDCAm9qjRV_ngYSo6L_EIRhoJExRhJfsoiA40UGksnmHdwJnih_v25SHTQ-EK7cIDyjAa6dhxUrOzNzKguR6lC2Wjf2HHpkYBFW6FEHmka-hB700X6dWA8lsrO37",
-                    "beta": "u64:D0VgCzzAFJlVwbqJYNvKvoa18CWyoNBK0136o495PR91FItBdlrd81S9GG7_KxwOMsJKPJUeGOlnGH6aZ_OuIprHCWd5ij5vXhb0BDxGlN2g2FfO6c7bC_FVEPW0_8n1DJS00TwG_9a6No5-ZSrheQm24K-FeRBnJE6Hm8-Qd8wMWb6Ea-pMxc8dYecUeQA8PbESZgFBqJ2pWoBghhumDYlVBVAxA-UNeOb3-WcMIImSr93059aQUJADKzs2VywQ",
-                }
-            },
-            "verifiers": {
-                "alpha": "u64:Ax9PWJpMePSumkm7L4n1bNaFMazOkGUNvkZe_kWXe0ZZdkkjQYd4vE6LEOW1QvVdNzb8QWFINrgaWp3e-9Qci4Ay7x0HdHxwwqGld-bLUNME1wVLBtWAAZSsAcAWAfQESYeLaDCAm9qjRV_ngYSo6L_EIRhoJExRhJfsoiA40UGksnmHdwJnih_v25SHTQ-EK7cIDyjAa6dhxUrOzNzKguR6lC2Wjf2HHpkYBFW6FEHmka-hB700X6dWA8lsrO37",
-                "beta": "u64:D0VgCzzAFJlVwbqJYNvKvoa18CWyoNBK0136o495PR91FItBdlrd81S9GG7_KxwOMsJKPJUeGOlnGH6aZ_OuIprHCWd5ij5vXhb0BDxGlN2g2FfO6c7bC_FVEPW0_8n1DJS00TwG_9a6No5-ZSrheQm24K-FeRBnJE6Hm8-Qd8wMWb6Ea-pMxc8dYecUeQA8PbESZgFBqJ2pWoBghhumDYlVBVAxA-UNeOb3-WcMIImSr93059aQUJADKzs2VywQ",
-            },
-            "credential_keypair": {
-                "public": "u64:BE8ERC16Xsdg3PaGDwLYgEoagKWC1Eb-88aXg09qhvTv_onrHigAR5bbtFMcyWF9_xOeiY9Xvrt1lcdpWmwbKc_FThYOKj8ezwPlkZ5a75karo-d762W5EzuXw-76gI7_w",
-                "private": "u64:StbYmlCs7YlIm3UmSpBoEwgdFRFaJuB2j4H10p7wRYY",
-            },
-        },
+  "credential_proof": {
+    "kappa": "Dqi7t2KSTl+xTzCn6Fpu4Yx9pfa8DrBnEVppVvS+5AkaTfkVrJtdbV+1zMECc4EnQp9Py4W3TZk9MyizU8HXrdnV08oc43WdBubxNNZvX4ur4xsMpxVXkLMIhxg/tYeQENo7UV94ucqYEbdC5nnhpnRn/wMtIu1eUZlC0VpriIVv6bkjugkALEMHIGrMW1eDCB8C8YwxQPuk8Qz5xi+OiJNsA41QWUM2VAVzHakyX7zT3m6oiL2sRobheKdnjJl7",
+    "nu": "AlCKclBEjzz4eurdXzpoub+sF73/3RQvJjLW2Acm9nYQwjURhTnywSX4ynoFuUD3gg==",
+    "pi_v": {
+      "c": "OpYmwMmoswiMp/p80nl48t5/8jpXOcHDMsJcTT0cSmE=",
+      "rm": "Gk5Tk8/tfZNK8G1tnX5/PdMh7MVtQVj36HMqCMnw9+g=",
+      "rr": "0JJlnqZbX13y5CL6xB+niymG7o0t0SJ+H7wNAuxQ2TY="
+    },
+    "sigma_prime": {
+      "h_prime": "Az8LmTpXk8EcQ77qiAQyTHtBsmSqLuESPFTYcW7wcXIqg3s2n1ZNA9PkN0Ayx1POhw==",
+      "s_prime": "AhnnAhSOD61gCCjvL9rib030US2m4nTBiaS1j8tmj011WkCVybY7rMxqKnBpviBR/Q=="
+    }
+  },
+  "petition": {
+    "owner": "AxSggI9xzQ/RTjH2gRyFd+QHPCTqZucAihUyETUhVdJY9vohtmcGDFmEdOTHOTCeow==",
+    "scores": {
+      "neg": {
+        "left": "f38=",
+        "right": "f38="
+      },
+      "pos": {
+        "left": "f38=",
+        "right": "f38="
+      }
+    },
+    "uid": "TW9yZV9wcml2YWN5X2Zvcl9hbGwh"
+  },
+  "uid": "More_privacy_for_all!",
+  "verifiers": {
+    "alpha": "P/0EVN5KUGszzll5GlO9yI3p1p80BaWp5UdJ/R4rrRYyxcBg93F3KKOEYJtrsJ4SBlxbo59jeWEi2WBRnBwClNI4YOD3ak2llLNp7y6NN3FbSKF6ZI1aoeD22rp/SUTTQVfT6vMtzXDHaE8KEWBnN87Gb5unt6tDj1kVhbE9scTV5G62ZpJBBB3aUTbQsDtCGWQlBWb0jImIaJ3ZndChwzUVy2DBnRC5nqVDzH8BJ5AtPO46qwo8M4EQ7dLPCv1h",
+    "beta": "DxkhJCeC0LmNix2Q9XZxmHKwBv6fbYymNH6PGdvnOU6uD3NhZBbp+jA27kPon1CACigQ4IT/TpUGJwoy3M0o7l2x+mxPS6akE26kMrYARNC3fbYk6N9ugbjki8WX6uPQFheJJ1ZfSiiUQ02MFmIPTDKa0bRjXTyHak41+2SbQpPU1BYreIlIrDmzP8XrEaz0H0287Mg85L/iAXdtSpOk5qRyXm+lGa6QldyYkQ22xmNN6Ch0mIb3Ds9/e8EN1bM0"
+  }
+},
     ),
     verifier: dict = Body(
         ...,
         example={
-            "zenroom": {
-                "curve": "goldilocks",
-                "encoding": "url64",
-                "version": "1.0.0+68f2ba8",
-                "scenario": "simple",
-            },
-            "MadHatter": {
-                "verifier": {
-                    "alpha": "u64:Ax9PWJpMePSumkm7L4n1bNaFMazOkGUNvkZe_kWXe0ZZdkkjQYd4vE6LEOW1QvVdNzb8QWFINrgaWp3e-9Qci4Ay7x0HdHxwwqGld-bLUNME1wVLBtWAAZSsAcAWAfQESYeLaDCAm9qjRV_ngYSo6L_EIRhoJExRhJfsoiA40UGksnmHdwJnih_v25SHTQ-EK7cIDyjAa6dhxUrOzNzKguR6lC2Wjf2HHpkYBFW6FEHmka-hB700X6dWA8lsrO37",
-                    "beta": "u64:D0VgCzzAFJlVwbqJYNvKvoa18CWyoNBK0136o495PR91FItBdlrd81S9GG7_KxwOMsJKPJUeGOlnGH6aZ_OuIprHCWd5ij5vXhb0BDxGlN2g2FfO6c7bC_FVEPW0_8n1DJS00TwG_9a6No5-ZSrheQm24K-FeRBnJE6Hm8-Qd8wMWb6Ea-pMxc8dYecUeQA8PbESZgFBqJ2pWoBghhumDYlVBVAxA-UNeOb3-WcMIImSr93059aQUJADKzs2VywQ",
-                }
-            },
+  "MadHatter": {
+    "verifier": {
+      "alpha": "P/0EVN5KUGszzll5GlO9yI3p1p80BaWp5UdJ/R4rrRYyxcBg93F3KKOEYJtrsJ4SBlxbo59jeWEi2WBRnBwClNI4YOD3ak2llLNp7y6NN3FbSKF6ZI1aoeD22rp/SUTTQVfT6vMtzXDHaE8KEWBnN87Gb5unt6tDj1kVhbE9scTV5G62ZpJBBB3aUTbQsDtCGWQlBWb0jImIaJ3ZndChwzUVy2DBnRC5nqVDzH8BJ5AtPO46qwo8M4EQ7dLPCv1h",
+      "beta": "DxkhJCeC0LmNix2Q9XZxmHKwBv6fbYymNH6PGdvnOU6uD3NhZBbp+jA27kPon1CACigQ4IT/TpUGJwoy3M0o7l2x+mxPS6akE26kMrYARNC3fbYk6N9ugbjki8WX6uPQFheJJ1ZfSiiUQ02MFmIPTDKa0bRjXTyHak41+2SbQpPU1BYreIlIrDmzP8XrEaz0H0287Mg85L/iAXdtSpOk5qRyXm+lGa6QldyYkQ22xmNN6Ch0mIb3Ds9/e8EN1bM0"
+    }
+  }
         },
     ),
     address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8090/batches",
