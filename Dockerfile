@@ -23,7 +23,8 @@ RUN apt-get update -y -q \
     build-essential \
     && apt-get clean
 
-RUN pip3 install grpcio-tools wheel
+RUN pip3 install wheel
+RUN pip3 install grpcio-tools
 
 RUN mkdir -p /var/log/sawtooth /project
 
@@ -32,5 +33,6 @@ RUN pip3 install -e /project/petition-tp-python
 
 ENV PATH=$PATH:/project/petition-tp-python/bin
 WORKDIR /project/petition-tp-python
+RUN wget https://files.dyne.org/zenroom/nightly/zenroom-linux-amd64 -O /usr/local/bin/zenroom && chmod +x /usr/local/bin/zenroom
 
 CMD petition-tp-python

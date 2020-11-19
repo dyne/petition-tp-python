@@ -15,10 +15,10 @@
 import base64
 import json
 from json import JSONDecodeError
-from typing import Optional
 from urllib.error import URLError
 
 import cbor2
+import requests
 import jwt
 from fastapi import APIRouter, HTTPException, Security, Body
 from fastapi.security import OAuth2PasswordBearer
@@ -318,6 +318,30 @@ def tally_petition(
     )
     return _post(private_key, address, payload)
 
+
+@router.post(
+    "/remote_zencode_exec",
+    tags=["Zencode"],
+    summary="Execute generic contracts from remote urls",
+    status_code=HTTP_200_OK,
+)
+def remote_zencode_exec(uid: str,
+                 contract: str,
+                 keys: str = None,
+                 data: dict = Body(...),
+                 address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8008/batches"):
+
+    _contract_response = requests.get(contract, verify=False)
+    _keys_response = requests.get(keys, verify=False)
+
+    payload = dict(
+        action="exec",
+        contract=_contract_response.text,
+        petition_id=uid,
+        keys=_keys_response.text,
+        data=data,
+    )
+    return _post(None, address, payload)
 
 @router.post(
     "/zencode_exec",
