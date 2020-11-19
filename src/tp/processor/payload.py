@@ -31,6 +31,7 @@ class ACTION:
     TALLY = "tally"
     EXEC = "exec"
 
+
 class Payload:
     def __init__(self, payload):
         payload = cbor2.loads(payload)
@@ -84,12 +85,6 @@ class Payload:
         self.petition_id = petition_id
         self.action = action
         self.contract = contract
-
-    def data(self):
-        return self.data
-
-    def keys(self):
-        return self.keys
 
     @staticmethod
     def from_bytes(payload):
