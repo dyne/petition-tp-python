@@ -48,9 +48,6 @@ class Payload:
         if not action:
             raise InvalidTransaction("action is required")
 
-        if not keys:
-            raise InvalidTransaction("keys is required")
-
         if action not in [
             ACTION.COUNT,
             ACTION.CREATE,
@@ -66,23 +63,27 @@ class Payload:
                 keys_object = json.loads(keys)
             except ValueError:
                 raise InvalidTransaction(
-                    "data is in a wrong format, should be a valid JSON"
+                    "keys is in a wrong format, should be a valid JSON"
                 )
             except TypeError:
                 keys_object = keys
 
             self.keys = json.dumps(keys_object, sort_keys=True)
+        else:
+            self.keys = None
 
         if data:
             try:
                 data_object = json.loads(data)
             except ValueError:
                 raise InvalidTransaction(
-                    "keys is in a wrong format, should be a valid JSON"
+                    "data is in a wrong format, should be a valid JSON"
                 )
             except TypeError:
                 data_object = data
             self.data = json.dumps(data_object, sort_keys=True)
+        else:
+            self.data = None
 
         self.petition_id = petition_id
         self.action = action

@@ -39,18 +39,31 @@ FAMILY_NAME = "DECODE_PETITION"
 LOG = logging.getLogger(__name__)
 
 
-def zencode_exec_rng(script, random_seed, keys, data):
-    with NamedTemporaryFile() as fk, NamedTemporaryFile() as fd:
-        fd.write(data.encode())
-        fd.seek(0)
-        fk.write(keys.encode())
-        fk.seek(0)
+def zencode_exec_rng(script, random_seed, keys=None, data=None):
+    zenroom_command_args = ['zenroom', '-z']
+    if keys:
+        with NamedTemporaryFile() as fk:
+            fk.write(keys.encode())
+            fk.seek(0)
+            zenroom_command_args.append('-k')
+            zenroom_command_args.append(fk.name)
+
+    if data:
+        with NamedTemporaryFile() as fd:
+            fd.write(data.encode())
+            fd.seek(0)
+            zenroom_command_args.append('-a')
+            zenroom_command_args.append(fd.name)
+    if random_seed:
         config = f"RNGSEED=hex:{sha512(random_seed).hexdigest()}"
-        p = Popen(['zenroom', '-z', '-k', fk.name, '-a', fd.name, '-c', config], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        result = p.communicate(input=script.encode())
-        if p.returncode != 0:
-            raise InvalidTransaction(result[1].decode())
-        return result[0].decode().strip()
+        zenroom_command_args.append('-c')
+        zenroom_command_args.append(config)
+
+    p = Popen(zenroom_command_args, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    result = p.communicate(input=script.encode())
+    if p.returncode != 0:
+        raise InvalidTransaction(result[1].decode())
+    return result[0].decode().strip()
 
 
 class PetitionTransactionHandler(TransactionHandler):
