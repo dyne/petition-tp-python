@@ -332,13 +332,14 @@ def remote_zencode_exec(uid: str,
                  address: str = f"{DEFAULT_SAWTOOTH_ADDRESS}:8008/batches"):
 
     _contract_response = requests.get(contract, verify=False)
-    _keys_response = requests.get(keys, verify=False)
+    if keys:
+        _keys_response = requests.get(keys, verify=False)
 
     payload = dict(
         action="exec",
         contract=_contract_response.text,
         petition_id=uid,
-        keys=_keys_response.text,
+        keys=_keys_response.text if keys else None,
         data=data,
     )
     return _post(None, address, payload)
