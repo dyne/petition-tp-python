@@ -29,7 +29,7 @@ class ACTION:
     CREATE = "create"
     SIGN = "sign"
     TALLY = "tally"
-
+    EXEC = "exec"
 
 class Payload:
     def __init__(self, payload):
@@ -38,6 +38,7 @@ class Payload:
         data = payload.get("data", None)
         keys = payload.get("keys", None)
         action = payload.get("action", None)
+        contract = payload.get("contract", None)
         self.placeholders = payload.get("placeholders", {}).items()
 
         if not petition_id:
@@ -55,6 +56,7 @@ class Payload:
             ACTION.SIGN,
             ACTION.SHOW,
             ACTION.TALLY,
+            ACTION.EXEC
         ]:
             raise InvalidTransaction(f"Invalid action: {action}")
 
@@ -81,6 +83,7 @@ class Payload:
         self.keys = json.dumps(keys_object, sort_keys=True)
         self.petition_id = petition_id
         self.action = action
+        self.contract = contract
 
     def data(self):
         return self.data
